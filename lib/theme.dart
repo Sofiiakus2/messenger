@@ -59,12 +59,12 @@ final textTheme = TextTheme(
   ),
   labelLarge: GoogleFonts.montserrat(
       fontSize: 30,
-      fontWeight: FontWeight.w800,
-      color: Colors.black
+      fontWeight: FontWeight.w600,
+      color: Colors.white
   ),
   bodySmall: GoogleFonts.montserrat(
       fontSize: 16,
-      fontWeight: FontWeight.w300,
+      fontWeight: FontWeight.w600,
       color: Colors.black
   ),
 
