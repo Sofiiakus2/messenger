@@ -68,7 +68,7 @@ class FavouriteContacts extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 34,
-                          backgroundImage: NetworkImage(favouriteUserDetails[index].image),
+                          backgroundImage: NetworkImage(favouriteUserDetails[index].image!),
                           backgroundColor: Colors.grey[200],
                         ),
                         const SizedBox(height: 8),

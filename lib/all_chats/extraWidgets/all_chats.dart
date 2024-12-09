@@ -80,7 +80,7 @@ class _AllChatsState extends State<AllChats> {
                     children: [
                       CircleAvatar(
                         radius: 34,
-                        backgroundImage: NetworkImage(companion!.image),
+                        backgroundImage: NetworkImage(companion!.image!),
                         backgroundColor: Colors.grey[200],
                       ),
                       const SizedBox(width: 20),
@@ -89,7 +89,7 @@ class _AllChatsState extends State<AllChats> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              companion.name,
+                              companion!.name,
                               style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w900, color: Colors.black),
                               textAlign: TextAlign.center,
                               softWrap: true,

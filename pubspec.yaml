@@ -39,6 +39,9 @@ dependencies:
   intl: ^0.20.1
   get: ^4.6.6
   flutter_svg: ^2.0.16
+  firebase_auth: ^5.3.4
+  cloud_firestore: ^5.5.1
+  shared_preferences: ^2.3.3
 
 dev_dependencies:
   flutter_test:

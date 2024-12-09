@@ -1,8 +1,23 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:messanger/repositories/auth_repository.dart';
+import 'package:messanger/repositories/user_repository.dart';
 import 'package:messanger/theme.dart';
 
-class LoginPage extends StatelessWidget {
+import '../repositories/auth_local_storage.dart';
+
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +25,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          SizedBox(
+          const SizedBox(
             height: double.infinity,
             width: double.infinity,
           ),
@@ -19,7 +34,7 @@ class LoginPage extends StatelessWidget {
             child: Container(
               height: screenSize.height * 0.7,
               width: screenSize.width,
-              padding: EdgeInsets.symmetric(vertical: 25),
+              padding: const EdgeInsets.symmetric(vertical: 25),
               decoration: const BoxDecoration(
                 color: primaryColor,
                 borderRadius: BorderRadius.only(
@@ -46,8 +61,8 @@ class LoginPage extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -55,6 +70,7 @@ class LoginPage extends StatelessWidget {
                           style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.black)
                         ),
                         TextField(
+                          controller: emailController,
                           style: Theme.of(context).textTheme.bodySmall,
                           decoration: InputDecoration(
                             filled: true,
@@ -65,7 +81,7 @@ class LoginPage extends StatelessWidget {
                             ),
                             hintText: 'yourEmail@gmail.com',
                             hintStyle: TextStyle(color: Colors.grey[500]),
-                            border: OutlineInputBorder(
+                            border: const OutlineInputBorder(
                              // borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
                             ),
@@ -80,8 +96,8 @@ class LoginPage extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -89,6 +105,7 @@ class LoginPage extends StatelessWidget {
                             style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.black)
                         ),
                         TextField(
+                          controller: passwordController,
                           style: Theme.of(context).textTheme.bodySmall,
                           decoration: InputDecoration(
                             filled: true,
@@ -99,7 +116,7 @@ class LoginPage extends StatelessWidget {
                             ),
                             hintText: '●●●●●●',
                             hintStyle: TextStyle(color: Colors.grey[500]),
-                            border: OutlineInputBorder(
+                            border: const OutlineInputBorder(
                               // borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
                             ),
@@ -112,21 +129,28 @@ class LoginPage extends StatelessWidget {
                   Container(
                     width: screenSize.width,
                     height: 80,
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: ElevatedButton(
-                        onPressed: (){},
+                        onPressed: () async{
+                          User? user = await AuthRepository().loginUser(emailController.text, passwordController.text);
+                          //UserRepository().getCurrentUserInfo(user!.uid);
+                          await AuthLocalStorage().saveUserId(user!.uid);
+                          Get.toNamed('/');
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16), // Відступи
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                         ),
                         child: Text('Увійти', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: primaryColor, fontWeight: FontWeight.w600),)),
                   ),
-                  Expanded(child: SizedBox()),
+                  const Expanded(child: SizedBox()),
                   TextButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      Get.toNamed('/signUp');
+                    },
                     child:  Text(
                       'Ще немає акаунту? Зареєструватися!',
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.black)

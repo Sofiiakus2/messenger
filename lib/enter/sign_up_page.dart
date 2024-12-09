@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
-
+import 'package:messanger/repositories/auth_repository.dart';
+import 'package:get/get.dart';
 import '../theme.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
+
+  @override
+  State<SignUpPage> createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -11,11 +21,11 @@ class SignUpPage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          SizedBox(
+          const SizedBox(
             height: double.infinity,
             width: double.infinity,
           ),
-          Container(
+          SizedBox(
             height: screenSize.height * 0.3,
             child:  Center(
               child: Text('Реєстрація',
@@ -27,14 +37,14 @@ class SignUpPage extends StatelessWidget {
             child: Container(
               height: screenSize.height * 0.7,
               width: screenSize.width,
-              padding: EdgeInsets.symmetric(vertical: 25),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.symmetric(vertical: 25),
+              decoration: const BoxDecoration(
                 color: primaryColor,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(40),
                   topRight: Radius.circular(40),
                 ),
-                boxShadow: const [
+                boxShadow: [
                   BoxShadow(
                     color: Colors.grey,
                     spreadRadius: 1,
@@ -52,8 +62,8 @@ class SignUpPage extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -61,6 +71,7 @@ class SignUpPage extends StatelessWidget {
                             style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.black)
                         ),
                         TextField(
+                          controller: nameController,
                           style: Theme.of(context).textTheme.bodySmall,
                           decoration: InputDecoration(
                             filled: true,
@@ -71,7 +82,7 @@ class SignUpPage extends StatelessWidget {
                             ),
                             hintText: 'Іван',
                             hintStyle: TextStyle(color: Colors.grey[500]),
-                            border: OutlineInputBorder(
+                            border: const OutlineInputBorder(
                               // borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
                             ),
@@ -86,8 +97,8 @@ class SignUpPage extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -95,6 +106,7 @@ class SignUpPage extends StatelessWidget {
                             style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.black)
                         ),
                         TextField(
+                          controller: emailController,
                           style: Theme.of(context).textTheme.bodySmall,
                           decoration: InputDecoration(
                             filled: true,
@@ -105,7 +117,7 @@ class SignUpPage extends StatelessWidget {
                             ),
                             hintText: 'yourEmail@gmail.com',
                             hintStyle: TextStyle(color: Colors.grey[500]),
-                            border: OutlineInputBorder(
+                            border: const OutlineInputBorder(
                               // borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
                             ),
@@ -120,8 +132,8 @@ class SignUpPage extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -129,6 +141,7 @@ class SignUpPage extends StatelessWidget {
                             style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.black)
                         ),
                         TextField(
+                          controller: passwordController,
                           style: Theme.of(context).textTheme.bodySmall,
                           decoration: InputDecoration(
                             filled: true,
@@ -139,7 +152,7 @@ class SignUpPage extends StatelessWidget {
                             ),
                             hintText: '●●●●●●',
                             hintStyle: TextStyle(color: Colors.grey[500]),
-                            border: OutlineInputBorder(
+                            border: const OutlineInputBorder(
                               // borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
                             ),
@@ -152,9 +165,11 @@ class SignUpPage extends StatelessWidget {
                   Container(
                     width: screenSize.width,
                     height: 80,
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: ElevatedButton(
-                        onPressed: (){},
+                        onPressed: (){
+                          AuthRepository().registerUser(emailController.text, passwordController.text, nameController.text);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
                           shape: RoundedRectangleBorder(
@@ -164,9 +179,11 @@ class SignUpPage extends StatelessWidget {
                         ),
                         child: Text('Зареєструватися', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: primaryColor, fontWeight: FontWeight.w600),)),
                   ),
-                  Expanded(child: SizedBox()),
+                  const Expanded(child: SizedBox()),
                   TextButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      Get.toNamed('/login');
+                    },
                     child:  Text(
                         'Вже є акаунт? Увійти!',
                         style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.black)
