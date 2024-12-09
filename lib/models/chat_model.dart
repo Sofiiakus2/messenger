@@ -19,6 +19,8 @@ class ChatModel{
   }
 
 
+
+
 }
 
 List<ChatModel> chats = [

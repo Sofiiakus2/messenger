@@ -169,6 +169,10 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: ElevatedButton(
                         onPressed: (){
                           AuthRepository().registerUser(emailController.text, passwordController.text, nameController.text);
+                          emailController.clear();
+                          passwordController.clear();
+                          nameController.clear();
+                          Get.toNamed('/login');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,

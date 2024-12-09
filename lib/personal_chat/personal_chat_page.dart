@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:messanger/models/message_model.dart';
+import 'package:messanger/repositories/auth_local_storage.dart';
+import 'package:messanger/repositories/messages_repository.dart';
 import 'package:messanger/theme.dart';
 import '../models/chat_model.dart';
 import '../models/user_model.dart';
@@ -20,38 +22,70 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   final ScrollController _scrollController = ScrollController();
 
   List<MessageModel> messages = [];
+  ChatModel? chat;
   UserModel? companion;
+  String? currentUserId;
 
   @override
   void initState() {
     super.initState();
-    final arguments = Get.arguments;
-    final chat = arguments['chat'] as ChatModel;
-
-    companion = UserModel.getChatCompanion('0', chat);
-    messages = List.from(chat.messages);
+    _loadData();
   }
 
+  Future<void> _loadData() async {
+    currentUserId = await AuthLocalStorage().getUserId();
 
-  void addMessage(String text) {
-    setState(() {
-      messages.insert(
-        0,
-        MessageModel(
-          senderId: '0',
-          text: text,
-          time: DateTime.now(),
-          status: false,
-        ),
-      );
+    final arguments = Get.arguments;
+    chat = arguments['chat'] as ChatModel;
+
+    UserModel.getChatCompanion(chat!).then((companionUser) {
+      setState(() {
+        companion = companionUser;
+      });
     });
 
-    _scrollController.animateTo(
-      0.0,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
+    setState(() {
+      messages = List.from(chat!.messages);
+    });
   }
+
+  void addMessage(String text) async {
+    if (currentUserId == null || companion == null) return;
+
+    final newMessage = MessageModel(
+      senderId: currentUserId!,
+      text: text,
+      time: DateTime.now(),
+      status: false,
+    );
+
+    setState(() {
+      messages.insert(0, newMessage);
+    });
+
+    try {
+      await MessagesRepository().sendMessage(chat!.id, newMessage);
+    } catch (e) {
+      // Handle any errors
+      print("Error sending message: $e");
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0.0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -85,29 +119,41 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
                   ),
                 ],
               ),
-              child: Column(
+              child: companion == null
+                  ? Center(child: CircularProgressIndicator())  // Show loading indicator if companion is not fetched yet
+                  : Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 16.0),
-                    child: Text(companion!.name,
+                    child: Text(
+                      companion!.name,
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ),
-                  Text('Online',
+                  Text(
+                    'Online',
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
-                  const SizedBox(height: 30,),
+                  const SizedBox(height: 30),
                   Expanded(
                     child: Container(
                       height: screenSize.height * 0.65,
                       margin: const EdgeInsets.symmetric(vertical: 10),
-                      child: ListView.builder(
+                      child:
+                          messages.isEmpty
+                      ? Center(child: Text('У вас ще немає повідомлень', style: Theme.of(context).textTheme.labelSmall,))
+                      : ListView.builder(
                         reverse: true,
                         itemCount: messages.length,
                         itemBuilder: (context, index) {
-                          bool isSenderMe = messages[index].senderId == '0';
-                          return MessageView(isSenderMe: isSenderMe, companion: companion, messages: messages, index: index,);
+                          bool isSenderMe = messages[index].senderId == currentUserId;
+                          return MessageView(
+                            isSenderMe: isSenderMe,
+                            companion: companion,
+                            messages: messages,
+                            index: index,
+                          );
                         },
                       ),
                     ),
@@ -118,7 +164,6 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
                       addMessage(text);
                     },
                   ),
-
                 ],
               ),
             ),

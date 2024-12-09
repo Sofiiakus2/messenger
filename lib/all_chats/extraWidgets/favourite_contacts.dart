@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:messanger/models/user_model.dart';
+import 'package:messanger/repositories/chat_repository.dart';
 
+import '../../models/chat_model.dart';
+import '../../repositories/user_repository.dart';
 import '../../theme.dart';
 
-class FavouriteContacts extends StatelessWidget {
-  FavouriteContacts({
+class FavouriteContacts extends StatefulWidget {
+  const FavouriteContacts({
     super.key,
   });
 
-  List<UserModel> favouriteUserDetails = users
-      .where((user) => favouriteUsers.contains(user.id))
-      .toList();
+  @override
+  State<FavouriteContacts> createState() => _FavouriteContactsState();
+}
+
+class _FavouriteContactsState extends State<FavouriteContacts> {
+  List<UserModel> users = [];
 
   String formatName(String name) {
     if (name.contains(' ')) {
@@ -21,6 +29,21 @@ class FavouriteContacts extends StatelessWidget {
       return name;
     }
   }
+
+  void fetchUsers() async {
+    final fetchedUsers = await UserRepository().getAllUsers();
+    setState(() {
+      users = fetchedUsers;
+    });
+  }
+
+
+  @override
+  void initState() {
+    fetchUsers();
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -60,25 +83,31 @@ class FavouriteContacts extends StatelessWidget {
             height: 100,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: favouriteUsers.length,
+              itemCount: users.length,
                 itemBuilder: (context, index){
-                  return Container(
-                    margin: const EdgeInsets.only(left: 15),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 34,
-                          backgroundImage: NetworkImage(favouriteUserDetails[index].image!),
-                          backgroundColor: Colors.grey[200],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          formatName(favouriteUserDetails[index].name),
-                          style: Theme.of(context).textTheme.labelSmall,
-                          textAlign: TextAlign.center,
-                          softWrap: true,
-                        ),
-                      ],
+                  return GestureDetector(
+                    onTap: () async{
+                      ChatModel chat = await ChatRepository().getOrCreateChat(users[index].id!);
+                      Get.toNamed('/chat', arguments: {'chat': chat});
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 15),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 34,
+                            //backgroundImage: NetworkImage(favouriteUsers[index]!),
+                            backgroundColor: Colors.grey[200],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            formatName(users[index].name),
+                            style: Theme.of(context).textTheme.labelSmall,
+                            textAlign: TextAlign.center,
+                            softWrap: true,
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }),

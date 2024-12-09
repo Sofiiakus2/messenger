@@ -68,7 +68,12 @@ class _AllChatsState extends State<AllChats> {
           child: ListView.builder(
             itemCount: userChats.length,
             itemBuilder: (context, index) {
-              UserModel? companion = UserModel.getChatCompanion('0', userChats[index]);
+              UserModel? companion = users[2];//UserModel.getChatCompanion('0', userChats[index]);
+              // UserModel.getChatCompanion(chat).then((companionUser) {
+              //   setState(() {
+              //     companion = companionUser;
+              //   });
+              // });
               MessageModel? lastMessage = ChatModel.getLastMessage(userChats[index]);
               return GestureDetector(
                 onTap: (){

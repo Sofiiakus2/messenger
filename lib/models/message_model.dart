@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 import 'chat_model.dart';
@@ -14,6 +15,24 @@ class MessageModel{
    required this.time,
    required this.status
 });
+
+  factory MessageModel.fromMap(Map<String, dynamic> map) {
+    return MessageModel(
+      senderId: map['senderId'] as String,
+      text: map['text'] as String,
+      time: (map['time'] as Timestamp).toDate(),
+      status: map['status'] as bool,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'senderId': senderId,
+      'text': text,
+      'time': Timestamp.fromDate(time),
+      'status': status,
+    };
+  }
 
   void updateText(String newText) {
     text = newText;
