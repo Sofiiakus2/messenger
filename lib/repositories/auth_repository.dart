@@ -17,7 +17,6 @@ class AuthRepository{
       await firestore.collection('users').doc(userId).set({
         'name': name,
         'email': email,
-        'createdAt': FieldValue.serverTimestamp(),
       });
 
     } catch (e) {

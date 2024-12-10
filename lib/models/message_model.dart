@@ -13,7 +13,7 @@ class MessageModel{
    required this.senderId,
    required this.text,
    required this.time,
-   required this.status
+   required this.status,
 });
 
   factory MessageModel.fromMap(Map<String, dynamic> map) {

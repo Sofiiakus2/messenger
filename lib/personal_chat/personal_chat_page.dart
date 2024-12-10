@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:messanger/models/message_model.dart';
 import 'package:messanger/repositories/auth_local_storage.dart';
@@ -7,6 +6,7 @@ import 'package:messanger/repositories/messages_repository.dart';
 import 'package:messanger/theme.dart';
 import '../models/chat_model.dart';
 import '../models/user_model.dart';
+import '../repositories/chat_repository.dart';
 import 'extraWidgets/custom_app_bar.dart';
 import 'extraWidgets/message_view.dart';
 import 'extraWidgets/sending_block.dart';
@@ -23,6 +23,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
 
   List<MessageModel> messages = [];
   ChatModel? chat;
+  String? chatId;
   UserModel? companion;
   String? currentUserId;
 
@@ -36,7 +37,10 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     currentUserId = await AuthLocalStorage().getUserId();
 
     final arguments = Get.arguments;
-    chat = arguments['chat'] as ChatModel;
+    chatId = arguments['chatId'] ;
+    chat = await ChatRepository().getChatById(chatId!);
+    // print('-------------------');
+    // print(chat!.messages);
 
     UserModel.getChatCompanion(chat!).then((companionUser) {
       setState(() {
@@ -66,8 +70,6 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     try {
       await MessagesRepository().sendMessage(chat!.id, newMessage);
     } catch (e) {
-      // Handle any errors
-      print("Error sending message: $e");
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -84,6 +86,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   @override
   void dispose() {
     _scrollController.dispose();
+    super.dispose();
   }
 
 
@@ -120,7 +123,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
                 ],
               ),
               child: companion == null
-                  ? Center(child: CircularProgressIndicator())  // Show loading indicator if companion is not fetched yet
+                  ? const Center(child: CircularProgressIndicator())
                   : Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

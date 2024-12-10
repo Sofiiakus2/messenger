@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:messanger/models/message_model.dart';
 import '../../models/chat_model.dart';
 import '../../models/user_model.dart';
+import '../../repositories/chat_repository.dart';
 
 class AllChats extends StatefulWidget {
   const AllChats({
@@ -14,27 +15,53 @@ class AllChats extends StatefulWidget {
 }
 
 class _AllChatsState extends State<AllChats> {
-  List<ChatModel> userChats = [];
+  List<ChatModel> chats = [];
+  Map<String, UserModel> companions = {};
 
-  void getUserChats(String currentUserId) {
-    userChats = chats.where((chat) => chat.companionsIds.contains(currentUserId)).toList();
+  // void getUserChats(String currentUserId) {
+  //   userChats = chats.where((chat) => chat.companionsIds.contains(currentUserId)).toList();
+  //
+  //   userChats.sort((a, b) {
+  //     MessageModel? lastMessageA = ChatModel.getLastMessage(a);
+  //     MessageModel? lastMessageB = ChatModel.getLastMessage(b);
+  //
+  //     if (lastMessageA != null && lastMessageB != null) {
+  //       return lastMessageB.time.compareTo(lastMessageA.time); // Відсортовуємо за спаданням часу
+  //     }
+  //     return 0;
+  //   });
+  //
+  //   setState(() {});
+  // }
 
-    userChats.sort((a, b) {
-      MessageModel? lastMessageA = ChatModel.getLastMessage(a);
-      MessageModel? lastMessageB = ChatModel.getLastMessage(b);
+  void fetchUserChats() async {
+    final chatIds = await ChatRepository().getChatIdsByUserId();
 
-      if (lastMessageA != null && lastMessageB != null) {
-        return lastMessageB.time.compareTo(lastMessageA.time); // Відсортовуємо за спаданням часу
-      }
-      return 0;
+    final chatFutures = chatIds.map((id) => ChatRepository().getChatByIdWithoutMessages(id));
+    final results = await Future.wait(chatFutures);
+
+    final filteredChats = results.whereType<ChatModel>().toList();
+
+    final companionFutures = <Future<MapEntry<String, UserModel>>>[];
+    for (var chat in filteredChats) {
+      companionFutures.add(
+        UserModel.getChatCompanion(chat).then((companionUser) => MapEntry(chat.id, companionUser!)),
+      );
+    }
+
+    final companionsData = await Future.wait(companionFutures);
+
+    setState(() {
+      chats = filteredChats;
+      companions = Map.fromEntries(companionsData);
     });
-
-    setState(() {});
   }
+
 
   @override
   void initState() {
-    getUserChats('0');
+    //getUserChats('0');
+    fetchUserChats();
     super.initState();
   }
 
@@ -66,18 +93,13 @@ class _AllChatsState extends State<AllChats> {
           width: screenSize.width,
           margin: const EdgeInsets.only(left: 30, right: 20),
           child: ListView.builder(
-            itemCount: userChats.length,
+            itemCount: chats.length,
             itemBuilder: (context, index) {
-              UserModel? companion = users[2];//UserModel.getChatCompanion('0', userChats[index]);
-              // UserModel.getChatCompanion(chat).then((companionUser) {
-              //   setState(() {
-              //     companion = companionUser;
-              //   });
-              // });
-              MessageModel? lastMessage = ChatModel.getLastMessage(userChats[index]);
+              final chat = chats[index];
+              final companion = companions[chat.id];
               return GestureDetector(
                 onTap: (){
-                  Get.toNamed('/chat', arguments: {'chat': userChats[index]});
+                  Get.toNamed('/chat', arguments: {'chatId': chat.id});
                 },
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 20),
@@ -85,7 +107,7 @@ class _AllChatsState extends State<AllChats> {
                     children: [
                       CircleAvatar(
                         radius: 34,
-                        backgroundImage: NetworkImage(companion!.image!),
+                      //  backgroundImage: NetworkImage(companion!.image!),
                         backgroundColor: Colors.grey[200],
                       ),
                       const SizedBox(width: 20),
@@ -100,7 +122,7 @@ class _AllChatsState extends State<AllChats> {
                               softWrap: true,
                             ),
                             Text(
-                              lastMessage!.text,
+                              chat.lastMessage!,
                               style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.black),
                               textAlign: TextAlign.center,
                               softWrap: true,
@@ -110,7 +132,7 @@ class _AllChatsState extends State<AllChats> {
                         ),
                       ),
                       Text(
-                        formatLastMessageTime(lastMessage.time),
+                        formatLastMessageTime(chat.lastMessageTime!),
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.black),
                         textAlign: TextAlign.center,
                         softWrap: true,

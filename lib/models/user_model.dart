@@ -55,7 +55,7 @@ class UserModel{
     }
 
     String companionId = chat.companionsIds.firstWhere((id) => id != currentUserId);
-
+ 
     return await UserRepository().getUser(companionId);
   }
 }
