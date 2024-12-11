@@ -4,12 +4,14 @@ import 'package:intl/intl.dart';
 import 'chat_model.dart';
 
 class MessageModel{
+  String? id;
   String senderId;
   String text;
   DateTime time;
   bool status;
 
   MessageModel({
+    this.id,
    required this.senderId,
    required this.text,
    required this.time,
@@ -18,6 +20,7 @@ class MessageModel{
 
   factory MessageModel.fromMap(Map<String, dynamic> map) {
     return MessageModel(
+      id: map['id'],
       senderId: map['senderId'] as String,
       text: map['text'] as String,
       time: (map['time'] as Timestamp).toDate(),

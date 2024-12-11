@@ -26,6 +26,10 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   String? chatId;
   UserModel? companion;
   String? currentUserId;
+  bool _showActions = false;
+  int _selectedMessageIndex = -1;
+  Offset? _tapPosition ;
+
 
   @override
   void initState() {
@@ -33,14 +37,13 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     _loadData();
   }
 
+
   Future<void> _loadData() async {
     currentUserId = await AuthLocalStorage().getUserId();
 
     final arguments = Get.arguments;
-    chatId = arguments['chatId'] ;
+    chatId = arguments['chatId'];
     chat = await ChatRepository().getChatById(chatId!);
-    // print('-------------------');
-    // print(chat!.messages);
 
     UserModel.getChatCompanion(chat!).then((companionUser) {
       setState(() {
@@ -49,8 +52,33 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     });
 
     setState(() {
-      messages = List.from(chat!.messages);
+      messages = chat!.messages;
     });
+    //Todo: change the wrong message position
+
+    scrollChat();
+  }
+
+  void _onLongPress(Offset position, int index) {
+    setState(() {
+      _showActions = true;
+      _selectedMessageIndex = index;
+      _tapPosition = position;
+    });
+  }
+
+  void deleteMessage(String messageId) async {
+    try {
+      if (chatId == null) return;
+
+      setState(() {
+        messages.removeWhere((message) => message.id == messageId);
+      });
+
+      await MessagesRepository().deleteMessage(chatId!, messageId);
+    } catch (e) {
+      print('Error deleting message: $e');
+    }
   }
 
   void addMessage(String text) async {
@@ -64,22 +92,36 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     );
 
     setState(() {
-      messages.insert(0, newMessage);
+      messages.add(newMessage);
     });
+
+    scrollChat();
 
     try {
       await MessagesRepository().sendMessage(chat!.id, newMessage);
     } catch (e) {
+      print('Error sending message: $e');
     }
 
+  }
+
+  void scrollChat() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
-          0.0,
+          _scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
       }
+    });
+  }
+
+
+  void _hideMessageActions() {
+    setState(() {
+      _showActions = false;
+      _selectedMessageIndex = -1;
     });
   }
 
@@ -89,7 +131,6 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -97,9 +138,15 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     return Scaffold(
       body: Stack(
         children: [
-          SizedBox(
-            height: screenSize.height,
-            width: screenSize.width,
+          GestureDetector(
+            onTap: () {
+              _hideMessageActions();
+            },
+            child: Container(
+              color: Colors.transparent, // Робимо його прозорим, щоб він реагував на натискання
+              width: double.infinity,
+              height: double.infinity,
+            ),
           ),
           const CustomAppBar(),
           Positioned(
@@ -143,19 +190,32 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
                     child: Container(
                       height: screenSize.height * 0.65,
                       margin: const EdgeInsets.symmetric(vertical: 10),
-                      child:
-                          messages.isEmpty
-                      ? Center(child: Text('У вас ще немає повідомлень', style: Theme.of(context).textTheme.labelSmall,))
-                      : ListView.builder(
+                      child: messages.isEmpty
+                          ? Center(
+                        child: Text(
+                          'У вас ще немає повідомлень',
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      )
+                          : ListView.builder(
                         reverse: true,
+                        controller: _scrollController,
                         itemCount: messages.length,
                         itemBuilder: (context, index) {
-                          bool isSenderMe = messages[index].senderId == currentUserId;
-                          return MessageView(
-                            isSenderMe: isSenderMe,
-                            companion: companion,
-                            messages: messages,
-                            index: index,
+                          bool isSenderMe =
+                              messages[index].senderId == currentUserId;
+                          return GestureDetector(
+                            onLongPressStart: (LongPressStartDetails details) {
+                              _onLongPress(details.globalPosition, index);
+
+                            },
+                            child: MessageView(
+                              isSenderMe: isSenderMe,
+                              companion: companion,
+                              messages: messages,
+                              index: index,
+                              status: messages[index].status,
+                            ),
                           );
                         },
                       ),
@@ -171,6 +231,81 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
               ),
             ),
           ),
+          if (_showActions && _selectedMessageIndex != -1)
+
+            Positioned(
+              top: _tapPosition!.dy,
+              left: _tapPosition!.dx,
+              child: GestureDetector(
+                onTap: _hideMessageActions,
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          _hideMessageActions();
+                        },
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit, color: Colors.black),
+                            const SizedBox(width: 10),
+                            Text(
+                              "Edit",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          deleteMessage(messages[_selectedMessageIndex].id!);
+                          _hideMessageActions();
+                        },
+                        child: Row(
+                          children: [
+                            Icon(Icons.delete, color: Colors.black),
+                            const SizedBox(width: 10),
+                            Text(
+                              "Delete",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          // Handle forward
+                          _hideMessageActions();
+                          // Add your forward message logic here
+                        },
+                        child: Row(
+                          children: [
+                            Icon(Icons.forward, color: Colors.black),
+                            const SizedBox(width: 10),
+                            Text(
+                              "Forward",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:messanger/models/message_model.dart';
+import 'package:uuid/uuid.dart';
 
 class MessagesRepository{
 
@@ -13,6 +14,7 @@ class MessagesRepository{
       await chatRef.update({
         'messages': FieldValue.arrayUnion([
           {
+            'id': const Uuid().v4(),
             'senderId': newMessage.senderId,
             'text': newMessage.text,
             'time': newMessage.time,
@@ -50,5 +52,27 @@ class MessagesRepository{
     }
     return null;
   }
+
+  Future<void> deleteMessage(String chatId, String messageId) async {
+    try {
+      final chatRef = firestore.collection('chats').doc(chatId);
+
+      final chatSnapshot = await chatRef.get();
+      if (!chatSnapshot.exists) {
+        throw Exception('Chat not found');
+      }
+
+      final messages = List<Map<String, dynamic>>.from(chatSnapshot.data()?['messages'] ?? []);
+
+      messages.removeWhere((message) => message['id'] == messageId);
+
+      await chatRef.update({'messages': messages});
+
+      print('Message with id $messageId has been deleted.');
+    } catch (e) {
+      print('Error deleting message: $e');
+    }
+  }
+
 
 }

@@ -12,12 +12,14 @@ class MessageView extends StatelessWidget {
     required this.companion,
     required this.messages,
     required this.index,
+    required this.status,
   });
 
   final bool isSenderMe;
   final UserModel? companion;
   final List<MessageModel> messages;
   final int index;
+  final bool status;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class MessageView extends StatelessWidget {
           if (isSenderMe)
             Row(
               children: [
-                messages[index].status
+                status
                     ? SvgPicture.asset(
                   'assets/double-check.svg',
                   width: 16,
@@ -97,7 +99,7 @@ class MessageView extends StatelessWidget {
           if (!isSenderMe)
             Row(
               children: [
-                messages[index].status
+                status
                     ? SvgPicture.asset(
                   'assets/double-check.svg',
                   width: 16,

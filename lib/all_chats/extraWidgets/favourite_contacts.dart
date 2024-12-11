@@ -88,7 +88,7 @@ class _FavouriteContactsState extends State<FavouriteContacts> {
                   return GestureDetector(
                     onTap: () async{
                       ChatModel chat = await ChatRepository().getOrCreateChat(users[index].id!);
-                      Get.toNamed('/chat', arguments: {'chat': chat});
+                      Get.toNamed('/chat', arguments: {'chatId': chat.id});
                     },
                     child: Container(
                       margin: const EdgeInsets.only(left: 15),

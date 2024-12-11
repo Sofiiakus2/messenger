@@ -146,7 +146,7 @@ class ChatRepository{
           .map((messageData) => MessageModel.fromMap(messageData))
           .toList();
 
-      final limitedMessages = messages.length > 100 ? messages.take(100).toList() : messages;
+      final limitedMessages = messages.length > 5 ? messages.take(5).toList() : messages;
 
       final lastMessage = limitedMessages.isNotEmpty ? limitedMessages.first.text : null;
       final lastMessageTime = limitedMessages.isNotEmpty ? limitedMessages.first.time : null;

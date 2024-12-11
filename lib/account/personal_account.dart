@@ -4,8 +4,15 @@ import 'package:messanger/theme.dart';
 import '../models/user_model.dart';
 import '../repositories/user_repository.dart';
 
-class PersonalAccount extends StatelessWidget {
+class PersonalAccount extends StatefulWidget {
   const PersonalAccount({super.key});
+
+  @override
+  State<PersonalAccount> createState() => _PersonalAccountState();
+}
+
+class _PersonalAccountState extends State<PersonalAccount> {
+  bool _showActions = false;
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +167,60 @@ class PersonalAccount extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ),
+
+                Positioned(
+                  top: 50,
+                  right: 20,
+                  child: IconButton(
+                    icon: const Icon(Icons.more_vert, color: Colors.white, size: 30,),
+                    onPressed: () {
+                      setState(() {
+                        _showActions = !_showActions;
+                      });
+                    },
+                  ),
+                ),
+                if (_showActions)
+                  Positioned(
+                      top: 90,
+                      right: 40,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _showActions = false;
+                          });
+                        },
+                        child: Container(
+                          width: 200,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: primaryColor.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _showActions = false;
+                                  });
+                                },
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.edit, color: Colors.white, size: 24,),
+                                    SizedBox(width: 10),
+                                    Text("Редагувати", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white)),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                            ],
+                          ),
+                        ),
+                      )
+                  )
               ],
             ),
           );
