@@ -8,7 +8,8 @@ import '../models/chat_model.dart';
 import '../models/user_model.dart';
 import '../repositories/chat_repository.dart';
 import 'extraWidgets/custom_app_bar.dart';
-import 'extraWidgets/message_view.dart';
+import 'extraWidgets/message_actions.dart';
+import 'extraWidgets/message_list.dart';
 import 'extraWidgets/sending_block.dart';
 
 class PersonalChatPage extends StatefulWidget {
@@ -20,7 +21,6 @@ class PersonalChatPage extends StatefulWidget {
 
 class _PersonalChatPageState extends State<PersonalChatPage> {
   final ScrollController _scrollController = ScrollController();
-
   List<MessageModel> messages = [];
   ChatModel? chat;
   String? chatId;
@@ -28,8 +28,8 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   String? currentUserId;
   bool _showActions = false;
   int _selectedMessageIndex = -1;
-  Offset? _tapPosition ;
-
+  Offset? _tapPosition;
+  String? _editedMessage;
 
   @override
   void initState() {
@@ -37,10 +37,8 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     _loadData();
   }
 
-
   Future<void> _loadData() async {
     currentUserId = await AuthLocalStorage().getUserId();
-
     final arguments = Get.arguments;
     chatId = arguments['chatId'];
     chat = await ChatRepository().getChatById(chatId!);
@@ -52,18 +50,15 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     });
 
     setState(() {
-      messages = chat!.messages;
+      messages = chat!.messages!;
     });
-    //Todo: change the wrong message position
-
-    scrollChat();
   }
 
-  void _onLongPress(Offset position, int index) {
+  void _onLongPress(int index, LongPressStartDetails details) {
     setState(() {
       _showActions = true;
       _selectedMessageIndex = index;
-      _tapPosition = position;
+      _tapPosition = details.globalPosition;
     });
   }
 
@@ -81,6 +76,33 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     }
   }
 
+  void _editMessage(String messageId) {
+    setState(() {
+      _selectedMessageIndex = messages.indexWhere((message) => message.id == messageId);
+      _editedMessage = messages[_selectedMessageIndex].text;
+    });
+  }
+
+  void _saveEditedMessage(String messageId) async {
+    if (_editedMessage != null && _editedMessage!.isNotEmpty) {
+      setState(() {
+        messages[_selectedMessageIndex].text = _editedMessage!;
+      });
+
+      try {
+        await MessagesRepository().updateMessage(chatId!,messageId, _editedMessage!);
+      } catch (e) {
+        print('Error updating message: $e');
+      }
+
+      setState(() {
+        _selectedMessageIndex = -1;
+        _editedMessage = null;
+      });
+    }
+  }
+
+
   void addMessage(String text) async {
     if (currentUserId == null || companion == null) return;
 
@@ -92,7 +114,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     );
 
     setState(() {
-      messages.add(newMessage);
+      messages.insert(0, newMessage);
     });
 
     scrollChat();
@@ -102,21 +124,19 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     } catch (e) {
       print('Error sending message: $e');
     }
-
   }
 
   void scrollChat() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
+    Future.delayed(Duration(milliseconds: 100), () {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.jumpTo(
+            _scrollController.position.maxScrollExtent,
+          );
+        }
+      });
     });
   }
-
 
   void _hideMessageActions() {
     setState(() {
@@ -126,185 +146,84 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   }
 
   @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-
     return Scaffold(
       body: Stack(
         children: [
           GestureDetector(
-            onTap: () {
-              _hideMessageActions();
-            },
-            child: Container(
-              color: Colors.transparent, // Робимо його прозорим, щоб він реагував на натискання
-              width: double.infinity,
-              height: double.infinity,
-            ),
+            onTap: _hideMessageActions,
+            child: const SizedBox(width: double.infinity, height: double.infinity),
           ),
           const CustomAppBar(),
           Positioned(
             bottom: 0,
-            child: Container(
-              width: screenSize.width,
-              height: screenSize.height * 0.88,
-              decoration: const BoxDecoration(
-                color: primaryColor,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(40),
-                  topRight: Radius.circular(40),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    spreadRadius: 1,
-                    blurRadius: 10,
-                    offset: Offset(0, 1),
+            child: GestureDetector(
+              onTap: _hideMessageActions,
+              child: Container(
+                width: screenSize.width,
+                height: screenSize.height * 0.88,
+                decoration: const BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
                   ),
-                ],
-              ),
-              child: companion == null
-                  ? const Center(child: CircularProgressIndicator())
-                  : Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
-                    child: Text(
-                      companion!.name,
-                      style: Theme.of(context).textTheme.labelMedium,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey,
+                      spreadRadius: 1,
+                      blurRadius: 10,
+                      offset: Offset(0, 1),
                     ),
-                  ),
-                  Text(
-                    'Online',
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-                  const SizedBox(height: 30),
-                  Expanded(
-                    child: Container(
-                      height: screenSize.height * 0.65,
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      child: messages.isEmpty
-                          ? Center(
-                        child: Text(
-                          'У вас ще немає повідомлень',
-                          style: Theme.of(context).textTheme.labelSmall,
-                        ),
-                      )
-                          : ListView.builder(
-                        reverse: true,
-                        controller: _scrollController,
-                        itemCount: messages.length,
-                        itemBuilder: (context, index) {
-                          bool isSenderMe =
-                              messages[index].senderId == currentUserId;
-                          return GestureDetector(
-                            onLongPressStart: (LongPressStartDetails details) {
-                              _onLongPress(details.globalPosition, index);
-
-                            },
-                            child: MessageView(
-                              isSenderMe: isSenderMe,
-                              companion: companion,
-                              messages: messages,
-                              index: index,
-                              status: messages[index].status,
-                            ),
-                          );
-                        },
+                  ],
+                ),
+                child: companion == null
+                    ? const Center(child: CircularProgressIndicator())
+                    : Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Text(
+                        companion!.name,
+                        style: Theme.of(context).textTheme.labelMedium,
                       ),
                     ),
-                  ),
-                  SendingBlock(
-                    chatId: '',
-                    onMessageSent: (text) {
-                      addMessage(text);
-                    },
-                  ),
-                ],
+                    Text(
+                      'Online',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    const SizedBox(height: 30),
+                    Expanded(
+                      child: MessageList(
+                        scrollController: _scrollController,
+                        messages: messages,
+                        currentUserId: currentUserId,
+                        companion: companion,
+                        onLongPressStart: _onLongPress,
+                      ),
+                    ),
+                    SendingBlock(
+                      chatId: '',
+                      onMessageSent: (text) {
+                        addMessage(text);
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
           if (_showActions && _selectedMessageIndex != -1)
-
-            Positioned(
-              top: _tapPosition!.dy,
-              left: _tapPosition!.dx,
-              child: GestureDetector(
-                onTap: _hideMessageActions,
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 5,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          _hideMessageActions();
-                        },
-                        child: Row(
-                          children: [
-                            Icon(Icons.edit, color: Colors.black),
-                            const SizedBox(width: 10),
-                            Text(
-                              "Edit",
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          deleteMessage(messages[_selectedMessageIndex].id!);
-                          _hideMessageActions();
-                        },
-                        child: Row(
-                          children: [
-                            Icon(Icons.delete, color: Colors.black),
-                            const SizedBox(width: 10),
-                            Text(
-                              "Delete",
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          // Handle forward
-                          _hideMessageActions();
-                          // Add your forward message logic here
-                        },
-                        child: Row(
-                          children: [
-                            Icon(Icons.forward, color: Colors.black),
-                            const SizedBox(width: 10),
-                            Text(
-                              "Forward",
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            MessageActions(
+              currentUserId: currentUserId!,
+              selectedMessageIndex: _selectedMessageIndex,
+              messages: messages,
+              tapPosition: _tapPosition!,
+              deleteMessage: deleteMessage,
+              editMessage: _editMessage,
+              hideActions: _hideMessageActions,
             ),
         ],
       ),

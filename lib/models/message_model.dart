@@ -18,15 +18,17 @@ class MessageModel{
    required this.status,
 });
 
-  factory MessageModel.fromMap(Map<String, dynamic> map) {
+  factory MessageModel.fromMap(DocumentSnapshot doc) {
+    final map = doc.data() as Map<String, dynamic>;
     return MessageModel(
-      id: map['id'],
+      id: doc.id,
       senderId: map['senderId'] as String,
       text: map['text'] as String,
       time: (map['time'] as Timestamp).toDate(),
       status: map['status'] as bool,
     );
   }
+
 
   Map<String, dynamic> toMap() {
     return {
@@ -48,7 +50,7 @@ class MessageModel{
   static List<MessageModel> getMessagesByChatId(String chatId) {
     final chat = chats.firstWhere((chat) => chat.id == chatId);
 
-    return chat.messages;
+    return chat.messages!;
   }
 
 }

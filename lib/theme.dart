@@ -14,11 +14,15 @@ final lightTheme = ThemeData(
   useMaterial3: true,
   primaryColor: primaryColor,
   textTheme: textTheme,
-
   popupMenuTheme: PopupMenuThemeData(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(16)),
     ),
+  ),
+  dividerTheme: DividerThemeData(
+    color: Colors.black,
+    thickness: 1,
+    space: 10,
   ),
   scaffoldBackgroundColor: backgroundColor,
   colorScheme: ColorScheme.fromSeed(

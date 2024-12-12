@@ -4,7 +4,7 @@ import 'package:messanger/models/message_model.dart';
 class ChatModel{
   String id;
   List<String> companionsIds;
-  List<MessageModel> messages;
+  List<MessageModel>? messages;
   String? lastMessage;
   DateTime? lastMessageTime;
   bool? lastMessageSender;
@@ -12,18 +12,18 @@ class ChatModel{
   ChatModel({
     required this.id,
     required this.companionsIds,
-    required this.messages,
+    this.messages,
     this.lastMessage,
     this.lastMessageTime,
     this.lastMessageSender,
 });
 
-  static MessageModel? getLastMessage(ChatModel chat) {
-    if (chat.messages.isEmpty) {
-      return null;
-    }
-    return chat.messages.last;
-  }
+  // static MessageModel? getLastMessage(ChatModel chat) {
+  //   if (chat.messages.isEmpty) {
+  //     return null;
+  //   }
+  //   return chat.messages.last;
+  // }
 
 
 

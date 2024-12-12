@@ -8,45 +8,36 @@ class MessagesRepository{
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future<void> sendMessage(String chatId, MessageModel newMessage) async{
+  Future<void> sendMessage(String chatId, MessageModel newMessage) async {
     try {
-      final chatRef = firestore.collection('chats').doc(chatId);
-      await chatRef.update({
-        'messages': FieldValue.arrayUnion([
-          {
-            'id': const Uuid().v4(),
-            'senderId': newMessage.senderId,
-            'text': newMessage.text,
-            'time': newMessage.time,
-            'status': newMessage.status,
-          }
-        ]),
+      final messageRef = firestore.collection('chats').doc(chatId).collection('messages');
+      await messageRef.add({
+        'id': const Uuid().v4(),
+        'senderId': newMessage.senderId,
+        'text': newMessage.text,
+        'time': newMessage.time,
+        'status': newMessage.status,
       });
-
     } catch (e) {
       print("Error sending message: $e");
     }
   }
 
+
   Future<MessageModel?> getLastMessageByChatId(String chatId) async {
-
     try {
-      final chatDoc = await firestore.collection('chats').doc(chatId).get();
+      final messageSnapshot = await firestore
+          .collection('chats')
+          .doc(chatId)
+          .collection('messages')
+          .orderBy('time', descending: true)
+          .limit(1)
+          .get();
 
-      if (chatDoc.exists) {
-
-        final data = chatDoc.data()!;
-        final messagesList = data['messages'] as List<dynamic>;
-        final lastMessageMap = messagesList.last as Map<String, dynamic>;
-        final lastMessage = MessageModel.fromMap(lastMessageMap);
-
-        return MessageModel(
-          senderId: lastMessage.senderId,
-          text: lastMessage.text,
-          time: lastMessage.time,
-          status: false,
-        );
-            }
+      if (messageSnapshot.docs.isNotEmpty) {
+        final lastMessageData = messageSnapshot.docs.first;
+        return MessageModel.fromMap(lastMessageData);
+      }
     } catch (e) {
       print('Error fetching last message by chat ID: $e');
     }
@@ -55,23 +46,25 @@ class MessagesRepository{
 
   Future<void> deleteMessage(String chatId, String messageId) async {
     try {
-      final chatRef = firestore.collection('chats').doc(chatId);
+      final messageRef = firestore
+          .collection('chats')
+          .doc(chatId)
+          .collection('messages')
+          .doc(messageId);
 
-      final chatSnapshot = await chatRef.get();
-      if (!chatSnapshot.exists) {
-        throw Exception('Chat not found');
-      }
-
-      final messages = List<Map<String, dynamic>>.from(chatSnapshot.data()?['messages'] ?? []);
-
-      messages.removeWhere((message) => message['id'] == messageId);
-
-      await chatRef.update({'messages': messages});
+      await messageRef.delete();
 
       print('Message with id $messageId has been deleted.');
     } catch (e) {
       print('Error deleting message: $e');
     }
+  }
+
+  Future<void> updateMessage(String chatId, String messageId, String updatedText) async {
+
+    await FirebaseFirestore.instance.collection('chats').doc(chatId).collection('messages').doc(messageId).update({
+      'text': updatedText,
+    });
   }
 
 

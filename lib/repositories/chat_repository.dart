@@ -31,9 +31,6 @@ class ChatRepository{
       ChatModel chat = ChatModel(
         id: doc.id,
         companionsIds: List<String>.from(doc.data()['companionsIds']),
-        messages: (doc.data()['messages'] as List<dynamic>)
-            .map((message) => MessageModel.fromMap(message))
-            .toList(),
       );
 
       if (chat.companionsIds.contains(userId)) {
@@ -49,12 +46,10 @@ class ChatRepository{
     ChatModel newChat = ChatModel(
       id: '',
       companionsIds: [currentUserId, userId],
-      messages: [],
     );
 
     final docRef = await firestore.collection('chats').add({
       'companionsIds': newChat.companionsIds,
-      'messages': [],
     });
 
     newChat.id = docRef.id;
@@ -131,8 +126,8 @@ class ChatRepository{
     return null;
   }
 
-  Future<ChatModel?> getChatById(String chatId) async{
-    try{
+  Future<ChatModel?> getChatById(String chatId) async {
+    try {
       final chatDoc = await firestore.collection('chats').doc(chatId).get();
 
       if (!chatDoc.exists) {
@@ -140,20 +135,27 @@ class ChatRepository{
       }
 
       final chatData = chatDoc.data() as Map<String, dynamic>;
-      final messagesList = List<Map<String, dynamic>>.from(chatData['messages'] ?? []);
+      final companionsIds = List<String>.from(chatData['companionsIds']);
 
-      final messages = messagesList
-          .map((messageData) => MessageModel.fromMap(messageData))
+      // Отримуємо останні 5 повідомлень
+      final messageSnapshot = await firestore
+          .collection('chats')
+          .doc(chatId)
+          .collection('messages')
+          .orderBy('time', descending: true)
+          .limit(5)
+          .get();
+
+      final messages = messageSnapshot.docs
+          .map((doc) => MessageModel.fromMap(doc))
           .toList();
 
-      final limitedMessages = messages.length > 5 ? messages.take(5).toList() : messages;
-
-      final lastMessage = limitedMessages.isNotEmpty ? limitedMessages.first.text : null;
-      final lastMessageTime = limitedMessages.isNotEmpty ? limitedMessages.first.time : null;
+      final lastMessage = messages.isNotEmpty ? messages.first.text : null;
+      final lastMessageTime = messages.isNotEmpty ? messages.first.time : null;
 
       return ChatModel(
         id: chatId,
-        companionsIds: List<String>.from(chatData['companionsIds']),
+        companionsIds: companionsIds,
         messages: messages,
         lastMessage: lastMessage,
         lastMessageTime: lastMessageTime,
@@ -162,31 +164,12 @@ class ChatRepository{
             chatData['senderId']
             : null,
       );
-    }catch(e){
+    } catch (e) {
       print('Error fetching chat by ID: $e');
       return null;
     }
   }
 
-  Future<List<MessageModel>> fetchMoreMessages(String chatId, DateTime lastMessageTime) async {
-    try {
-      final messagesQuery = await firestore
-          .collection('chats')
-          .doc(chatId)
-          .collection('messages')
-          .orderBy('time', descending: true)
-          .startAfter([lastMessageTime])
-          .limit(100)
-          .get();
-
-      return messagesQuery.docs
-          .map((doc) => MessageModel.fromMap(doc.data()))
-          .toList();
-    } catch (e) {
-      print('Error fetching more messages: $e');
-      return [];
-    }
-  }
 
 
 }
