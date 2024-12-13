@@ -29,7 +29,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   bool _showActions = false;
   int _selectedMessageIndex = -1;
   Offset? _tapPosition;
-  String? _editedMessage;
+  bool isEdit = false;
 
   @override
   void initState() {
@@ -54,6 +54,14 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     });
   }
 
+  void _toggleEdit(bool editState, String? messageId) {
+    setState(() {
+      isEdit = editState;
+    });
+    //_hideMessageActions();
+  }
+
+
   void _onLongPress(int index, LongPressStartDetails details) {
     setState(() {
       _showActions = true;
@@ -76,30 +84,21 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     }
   }
 
-  void _editMessage(String messageId) {
-    setState(() {
-      _selectedMessageIndex = messages.indexWhere((message) => message.id == messageId);
-      _editedMessage = messages[_selectedMessageIndex].text;
-    });
-  }
+  void _saveEditedMessage(String messageId, String newText) async {
 
-  void _saveEditedMessage(String messageId) async {
-    if (_editedMessage != null && _editedMessage!.isNotEmpty) {
       setState(() {
-        messages[_selectedMessageIndex].text = _editedMessage!;
+        messages[_selectedMessageIndex].text = newText!;
       });
-
       try {
-        await MessagesRepository().updateMessage(chatId!,messageId, _editedMessage!);
+        await MessagesRepository().updateMessage(chatId!,messageId, newText);
       } catch (e) {
         print('Error updating message: $e');
       }
 
       setState(() {
         _selectedMessageIndex = -1;
-        _editedMessage = null;
       });
-    }
+
   }
 
 
@@ -111,6 +110,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
       text: text,
       time: DateTime.now(),
       status: false,
+      isEdited: false
     );
 
     setState(() {
@@ -141,7 +141,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   void _hideMessageActions() {
     setState(() {
       _showActions = false;
-      _selectedMessageIndex = -1;
+     // _selectedMessageIndex = -1;
     });
   }
 
@@ -204,10 +204,18 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
                         onLongPressStart: _onLongPress,
                       ),
                     ),
+                    const SizedBox(height: 15,),
                     SendingBlock(
                       chatId: '',
+                      isEdit: isEdit,
+                      text: isEdit ? messages[_selectedMessageIndex].text : null,
                       onMessageSent: (text) {
-                        addMessage(text);
+                        if (isEdit) {
+                          _saveEditedMessage(messages[_selectedMessageIndex].id!, text);
+                        } else {
+                          addMessage(text);
+                        }
+                        _toggleEdit(false, null);
                       },
                     ),
                   ],
@@ -222,7 +230,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
               messages: messages,
               tapPosition: _tapPosition!,
               deleteMessage: deleteMessage,
-              editMessage: _editMessage,
+              editMessage: () => _toggleEdit(true, messages[_selectedMessageIndex].id),
               hideActions: _hideMessageActions,
             ),
         ],

@@ -24,13 +24,13 @@ class MessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           if (!isSenderMe)
             CircleAvatar(
-              radius: 34,
+              radius: 24,
              // backgroundImage: NetworkImage(companion!.image!),
               backgroundColor: Colors.grey[200],
             ),
@@ -62,9 +62,9 @@ class MessageView extends StatelessWidget {
             ),
           Container(
             width: 270,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: const EdgeInsets.only(left: 20, top: 10),
             constraints: const BoxConstraints(
-              minHeight: 70,
+              minHeight: 50,
             ),
             decoration: BoxDecoration(
               color: secondaryColor,
@@ -79,20 +79,39 @@ class MessageView extends StatelessWidget {
                     : const Radius.circular(30),
               ),
             ),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                messages[index].text,
-                style: Theme.of(context)
-                    .textTheme
-                    .labelSmall
-                    ?.copyWith(color: Colors.black),
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    messages[index].text,
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelSmall
+                        ?.copyWith(color: Colors.black),
+                  ),
+                ),
+                if(messages[index].isEdited)
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 20),
+                    child: Text(
+                      'Змінено',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(color: primaryColor),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           if (isSenderMe)
             CircleAvatar(
-              radius: 34,
+              radius: 24,
               backgroundImage: NetworkImage('https://wallart.ua/wpmd/5986-orig.jpg'),
               backgroundColor: Colors.grey[200],
             ),

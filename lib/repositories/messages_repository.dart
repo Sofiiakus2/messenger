@@ -60,11 +60,25 @@ class MessagesRepository{
     }
   }
 
-  Future<void> updateMessage(String chatId, String messageId, String updatedText) async {
-
-    await FirebaseFirestore.instance.collection('chats').doc(chatId).collection('messages').doc(messageId).update({
-      'text': updatedText,
-    });
+  Future<void> updateMessage(
+    String chatId,
+    String messageId,
+    String updatedText,
+  ) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('chats')
+          .doc(chatId)
+          .collection('messages')
+          .doc(messageId)
+          .update({
+        'text': updatedText,
+        'isEdited': true,
+      });
+      print("Message updated successfully");
+    } catch (e) {
+      print("Error updating message: $e");
+    }
   }
 
 

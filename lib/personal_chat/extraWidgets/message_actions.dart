@@ -10,7 +10,7 @@ class MessageActions extends StatelessWidget {
   final List<MessageModel> messages;
   final Offset tapPosition;
   final Function(String) deleteMessage;
-  final Function(String) editMessage;
+  final Function() editMessage;
   final Function() hideActions;
 
   const MessageActions({
@@ -50,7 +50,8 @@ class MessageActions extends StatelessWidget {
               if (messages[selectedMessageIndex].senderId == currentUserId)
                 GestureDetector(
                   onTap: (){
-
+                    editMessage();
+                    hideActions();
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

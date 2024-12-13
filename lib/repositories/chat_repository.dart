@@ -137,13 +137,12 @@ class ChatRepository{
       final chatData = chatDoc.data() as Map<String, dynamic>;
       final companionsIds = List<String>.from(chatData['companionsIds']);
 
-      // Отримуємо останні 5 повідомлень
       final messageSnapshot = await firestore
           .collection('chats')
           .doc(chatId)
           .collection('messages')
           .orderBy('time', descending: true)
-          .limit(5)
+          .limit(100)
           .get();
 
       final messages = messageSnapshot.docs

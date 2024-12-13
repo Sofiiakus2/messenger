@@ -9,6 +9,7 @@ class MessageModel{
   String text;
   DateTime time;
   bool status;
+  bool isEdited;
 
   MessageModel({
     this.id,
@@ -16,6 +17,7 @@ class MessageModel{
    required this.text,
    required this.time,
    required this.status,
+   required this.isEdited,
 });
 
   factory MessageModel.fromMap(DocumentSnapshot doc) {
@@ -26,6 +28,7 @@ class MessageModel{
       text: map['text'] as String,
       time: (map['time'] as Timestamp).toDate(),
       status: map['status'] as bool,
+      isEdited: map['isEdited'] ?? false,
     );
   }
 
@@ -47,11 +50,6 @@ class MessageModel{
     status = newStatus;
   }
 
-  static List<MessageModel> getMessagesByChatId(String chatId) {
-    final chat = chats.firstWhere((chat) => chat.id == chatId);
-
-    return chat.messages!;
-  }
 
 }
 
