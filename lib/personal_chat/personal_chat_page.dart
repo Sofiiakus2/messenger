@@ -30,6 +30,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   int _selectedMessageIndex = -1;
   Offset? _tapPosition;
   bool isEdit = false;
+  bool isReply = false;
 
   @override
   void initState() {
@@ -54,11 +55,18 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     });
   }
 
-  void _toggleEdit(bool editState, String? messageId) {
+  void _toggleEdit(bool editState) {
     setState(() {
+      isReply = false;
       isEdit = editState;
     });
-    //_hideMessageActions();
+  }
+
+  void _toggleReply(bool replyState) {
+    setState(() {
+      isEdit = false;
+      isReply = replyState;
+    });
   }
 
 
@@ -81,6 +89,31 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
       await MessagesRepository().deleteMessage(chatId!, messageId);
     } catch (e) {
       print('Error deleting message: $e');
+    }
+  }
+
+  void _saveReplyMessage(MessageModel replyMessage, String newText) async{
+    if (currentUserId == null || companion == null) return;
+
+    final newMessage = MessageModel(
+        senderId: currentUserId!,
+        text: newText,
+        time: DateTime.now(),
+        status: false,
+        isEdited: false,
+        replyMessage: replyMessage
+    );
+
+    setState(() {
+      messages.insert(0, newMessage);
+    });
+
+    scrollChat();
+
+    try {
+      await MessagesRepository().sendMessage(chat!.id, newMessage);
+    } catch (e) {
+      print('Error sending message: $e');
     }
   }
 
@@ -208,14 +241,18 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
                     SendingBlock(
                       chatId: '',
                       isEdit: isEdit,
-                      text: isEdit ? messages[_selectedMessageIndex].text : null,
+                      isReply: isReply,
+                      text: isEdit || isReply ? messages[_selectedMessageIndex].text : null,
                       onMessageSent: (text) {
                         if (isEdit) {
                           _saveEditedMessage(messages[_selectedMessageIndex].id!, text);
-                        } else {
+                        } else if(isReply){
+                          _saveReplyMessage(messages[_selectedMessageIndex], text);
+                        }
+                        else {
                           addMessage(text);
                         }
-                        _toggleEdit(false, null);
+                        _toggleEdit(false);
                       },
                     ),
                   ],
@@ -230,7 +267,8 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
               messages: messages,
               tapPosition: _tapPosition!,
               deleteMessage: deleteMessage,
-              editMessage: () => _toggleEdit(true, messages[_selectedMessageIndex].id),
+              editMessage: () => _toggleEdit(true),
+              replyMessage: () => _toggleReply(true),
               hideActions: _hideMessageActions,
             ),
         ],

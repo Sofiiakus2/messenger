@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:messanger/personal_chat/extraWidgets/reply_message_view.dart';
 
 import '../../models/message_model.dart';
 import '../../models/user_model.dart';
@@ -82,6 +83,8 @@ class MessageView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                if(messages[index].replyMessage != null)
+                  ReplyMessageView(message: messages[index].replyMessage!,),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(

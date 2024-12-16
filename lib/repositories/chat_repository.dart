@@ -146,8 +146,9 @@ class ChatRepository{
           .get();
 
       final messages = messageSnapshot.docs
-          .map((doc) => MessageModel.fromMap(doc))
+          .map((doc) => MessageModel.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
+
 
       final lastMessage = messages.isNotEmpty ? messages.first.text : null;
       final lastMessageTime = messages.isNotEmpty ? messages.first.time : null;

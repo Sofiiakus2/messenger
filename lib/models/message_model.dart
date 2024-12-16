@@ -10,6 +10,7 @@ class MessageModel{
   DateTime time;
   bool status;
   bool isEdited;
+  MessageModel? replyMessage;
 
   MessageModel({
     this.id,
@@ -18,19 +19,23 @@ class MessageModel{
    required this.time,
    required this.status,
    required this.isEdited,
+    this.replyMessage,
 });
 
-  factory MessageModel.fromMap(DocumentSnapshot doc) {
-    final map = doc.data() as Map<String, dynamic>;
+  factory MessageModel.fromMap(Map<String, dynamic> map) {
     return MessageModel(
-      id: doc.id,
+      id: map['id'] ?? '',
       senderId: map['senderId'] as String,
       text: map['text'] as String,
       time: (map['time'] as Timestamp).toDate(),
       status: map['status'] as bool,
       isEdited: map['isEdited'] ?? false,
+      replyMessage: map['replyMessage'] != null
+          ? MessageModel.fromMap(map['replyMessage'] as Map<String, dynamic>)
+          : null,
     );
   }
+
 
 
   Map<String, dynamic> toMap() {
@@ -39,6 +44,8 @@ class MessageModel{
       'text': text,
       'time': Timestamp.fromDate(time),
       'status': status,
+      'isEdited': isEdited,
+      'replyMessage': replyMessage?.toMap(),
     };
   }
 

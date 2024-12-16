@@ -11,13 +11,15 @@ class MessagesRepository{
   Future<void> sendMessage(String chatId, MessageModel newMessage) async {
     try {
       final messageRef = firestore.collection('chats').doc(chatId).collection('messages');
-      await messageRef.add({
-        'id': const Uuid().v4(),
-        'senderId': newMessage.senderId,
-        'text': newMessage.text,
-        'time': newMessage.time,
-        'status': newMessage.status,
-      });
+      await messageRef.add(newMessage.toMap());
+      // await messageRef.add({
+      //   'id': const Uuid().v4(),
+      //   'senderId': newMessage.senderId,
+      //   'text': newMessage.text,
+      //   'time': newMessage.time,
+      //   'status': newMessage.status,
+      //   'replyMessage' : newMessage.replyMessage
+      // });
     } catch (e) {
       print("Error sending message: $e");
     }
@@ -35,7 +37,7 @@ class MessagesRepository{
           .get();
 
       if (messageSnapshot.docs.isNotEmpty) {
-        final lastMessageData = messageSnapshot.docs.first;
+        final lastMessageData = messageSnapshot.docs.first.data();
         return MessageModel.fromMap(lastMessageData);
       }
     } catch (e) {

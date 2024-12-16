@@ -11,6 +11,7 @@ class MessageActions extends StatelessWidget {
   final Offset tapPosition;
   final Function(String) deleteMessage;
   final Function() editMessage;
+  final Function() replyMessage;
   final Function() hideActions;
 
   const MessageActions({
@@ -20,6 +21,7 @@ class MessageActions extends StatelessWidget {
     required this.tapPosition,
     required this.deleteMessage,
     required this.editMessage,
+    required this.replyMessage,
     required this.hideActions,
   });
 
@@ -73,6 +75,7 @@ class MessageActions extends StatelessWidget {
                 ),
               GestureDetector(
                 onTap: () {
+                  replyMessage();
                   hideActions();
                 },
                 child: Row(
