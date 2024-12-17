@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:messanger/models/message_model.dart';
 import 'package:messanger/repositories/auth_local_storage.dart';
@@ -178,6 +179,14 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     });
   }
 
+  void _copyMessageAction() {
+    final String textToCopy = messages[_selectedMessageIndex].text;
+
+    Clipboard.setData(ClipboardData(text: textToCopy));
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -269,6 +278,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
               deleteMessage: deleteMessage,
               editMessage: () => _toggleEdit(true),
               replyMessage: () => _toggleReply(true),
+              copyAction: _copyMessageAction,
               hideActions: _hideMessageActions,
             ),
         ],

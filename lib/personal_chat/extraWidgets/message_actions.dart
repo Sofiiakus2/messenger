@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:messanger/theme.dart';
 
 import '../../models/message_model.dart';
 
@@ -13,6 +14,7 @@ class MessageActions extends StatelessWidget {
   final Function() editMessage;
   final Function() replyMessage;
   final Function() hideActions;
+  final Function() copyAction;
 
   const MessageActions({
     required this.currentUserId,
@@ -23,6 +25,7 @@ class MessageActions extends StatelessWidget {
     required this.editMessage,
     required this.replyMessage,
     required this.hideActions,
+    required this.copyAction,
   });
 
   @override
@@ -98,9 +101,24 @@ class MessageActions extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  // Handle forward
+                  copyAction();
                   hideActions();
-                  // Add your forward message logic here
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Текст скопійовано у буфер обміну',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white),
+                      ),
+                      duration: const Duration(seconds: 2),
+                      backgroundColor: thirdColor.withOpacity(0.5),
+                      behavior: SnackBarBehavior.floating,
+                      margin: const EdgeInsets.only(bottom: 50, left: 10, right: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                  );
+
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

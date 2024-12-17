@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:messanger/controllers/chat_controller.dart';
 import 'package:messanger/models/user_model.dart';
 import 'package:messanger/repositories/chat_repository.dart';
 
@@ -88,7 +88,10 @@ class _FavouriteContactsState extends State<FavouriteContacts> {
                   return GestureDetector(
                     onTap: () async{
                       ChatModel chat = await ChatRepository().getOrCreateChat(users[index].id!);
-                      Get.toNamed('/chat', arguments: {'chatId': chat.id});
+                      Get.toNamed('/chat', arguments: {'chatId': chat.id})?.then((_) {
+                        Get.find<ChatController>().fetchUserChats();
+                      });
+
                     },
                     child: Container(
                       margin: const EdgeInsets.only(left: 15),

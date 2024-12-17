@@ -8,6 +8,7 @@ import 'extraWidgets/favourite_contacts.dart';
 class ChatsPage extends StatelessWidget {
   const ChatsPage({super.key});
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +55,7 @@ class ChatsPage extends StatelessWidget {
               padding: const EdgeInsets.only(left: 15.0, top: 20, bottom: 30),
               child: Text('Повідомлення', style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.black),),
             ),
-            Stack(
+            const Stack(
               children: [
                 FavouriteContacts(),
                 AllChats()

@@ -15,7 +15,7 @@ class ReplyMessageView extends StatefulWidget {
 }
 
 class _ReplyMessageViewState extends State<ReplyMessageView> {
-  late UserModel? replyUser;
+  UserModel? replyUser;
 
   @override
   void initState() {
@@ -50,10 +50,9 @@ class _ReplyMessageViewState extends State<ReplyMessageView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if(replyUser != null)
             Text(
-              replyUser == null
-                ? 'Відповідь'
-                : replyUser!.name,
+              replyUser!.name,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(color: thirdColor),),
             Text(
               widget.message.text,

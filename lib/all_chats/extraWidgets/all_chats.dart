@@ -1,128 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:messanger/models/message_model.dart';
-import '../../models/chat_model.dart';
-import '../../models/user_model.dart';
-import '../../repositories/chat_repository.dart';
+import '../../controllers/chat_controller.dart';
 
-class AllChats extends StatefulWidget {
-  const AllChats({
-    super.key,
-  });
-
-  @override
-  State<AllChats> createState() => _AllChatsState();
-}
-
-class _AllChatsState extends State<AllChats> {
-  List<ChatModel> chats = [];
-  Map<String, UserModel> companions = {};
-
-  // void getUserChats(String currentUserId) {
-  //   userChats = chats.where((chat) => chat.companionsIds.contains(currentUserId)).toList();
-  //
-  //   userChats.sort((a, b) {
-  //     MessageModel? lastMessageA = ChatModel.getLastMessage(a);
-  //     MessageModel? lastMessageB = ChatModel.getLastMessage(b);
-  //
-  //     if (lastMessageA != null && lastMessageB != null) {
-  //       return lastMessageB.time.compareTo(lastMessageA.time); // Відсортовуємо за спаданням часу
-  //     }
-  //     return 0;
-  //   });
-  //
-  //   setState(() {});
-  // }
-
-  void fetchUserChats() async {
-    final chatIds = await ChatRepository().getChatIdsByUserId();
-
-    final chatFutures = chatIds.map((id) => ChatRepository().getChatByIdWithoutMessages(id));
-    final results = await Future.wait(chatFutures);
-
-    final filteredChats = results.whereType<ChatModel>().toList();
-
-    final companionFutures = <Future<MapEntry<String, UserModel>>>[];
-    for (var chat in filteredChats) {
-      companionFutures.add(
-        UserModel.getChatCompanion(chat).then((companionUser) => MapEntry(chat.id, companionUser!)),
-      );
-    }
-
-    final companionsData = await Future.wait(companionFutures);
-
-    setState(() {
-      chats = filteredChats;
-      companions = Map.fromEntries(companionsData);
-    });
-  }
-
-
-  @override
-  void initState() {
-    //getUserChats('0');
-    fetchUserChats();
-    super.initState();
-  }
+class AllChats extends StatelessWidget {
+  const AllChats({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
+    final chatController = Get.put(ChatController());
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 180),
-      child: Container(
-        width: screenSize.width,
-        height: screenSize.height * 0.65,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(40),
-            topRight: Radius.circular(40),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey,
-              spreadRadius: 1,
-              blurRadius: 20,
-              offset: Offset(0, 1),
-            ),
-          ],
-        ),
+    return Obx(() {
+      final chats = chatController.chats;
+      final companions = chatController.companions;
+
+      chats.sort((a, b) {
+        if (a.lastMessageTime == null || b.lastMessageTime == null) {
+          return 0;
+        }
+        return b.lastMessageTime!.compareTo(a.lastMessageTime!);
+      });
+
+      return Padding(
+        padding: const EdgeInsets.only(top: 180),
         child: Container(
-          width: screenSize.width,
-          margin: const EdgeInsets.only(left: 30, right: 20),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.65,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(40),
+              topRight: Radius.circular(40),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey,
+                spreadRadius: 1,
+                blurRadius: 20,
+                offset: Offset(0, 1),
+              ),
+            ],
+          ),
           child: ListView.builder(
             itemCount: chats.length,
             itemBuilder: (context, index) {
               final chat = chats[index];
               final companion = companions[chat.id];
+
               return GestureDetector(
-                onTap: (){
-                  Get.toNamed('/chat', arguments: {'chatId': chat.id});
+                onTap: () {
+                  Get.toNamed('/chat', arguments: {'chatId': chat.id})?.then((_) {
+                    chatController.fetchUserChats();
+                  });
                 },
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 20),
                   child: Row(
                     children: [
-                      CircleAvatar(
-                        radius: 34,
-                      //  backgroundImage: NetworkImage(companion!.image!),
-                        backgroundColor: Colors.grey[200],
-                      ),
+                      CircleAvatar(radius: 34, backgroundColor: Colors.grey[200]),
                       const SizedBox(width: 20),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              companion!.name,
-                              style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w900, color: Colors.black),
+                              companion?.name ?? 'Loading...',
+                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                  fontWeight: FontWeight.w900, color: Colors.black),
                               textAlign: TextAlign.center,
                               softWrap: true,
                             ),
                             Text(
-                              chat.lastMessage!,
+                              chat.lastMessage ?? '',
                               style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.black),
                               textAlign: TextAlign.center,
                               softWrap: true,
@@ -144,7 +94,7 @@ class _AllChatsState extends State<AllChats> {
             },
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

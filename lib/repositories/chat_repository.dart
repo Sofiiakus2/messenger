@@ -46,6 +46,7 @@ class ChatRepository{
     ChatModel newChat = ChatModel(
       id: '',
       companionsIds: [currentUserId, userId],
+      messages: []
     );
 
     final docRef = await firestore.collection('chats').add({
@@ -85,20 +86,15 @@ class ChatRepository{
     }
   }
 
-  Future<List<String>> getChatIdsByUserId() async {
+  Stream<List<String>> getChatIdsByUserId() {
     User? currentUser = auth.currentUser;
-    try {
-      final querySnapshot = await firestore
-          .collection('chats')
-          .where('companionsIds', arrayContains: currentUser!.uid)
-          .get();
-
-      return querySnapshot.docs.map((doc) => doc.id).toList();
-    } catch (e) {
-      print('Error fetching chat IDs: $e');
-      return [];
-    }
+    return firestore
+        .collection('chats')
+        .where('companionsIds', arrayContains: currentUser!.uid)
+        .snapshots()
+        .map((querySnapshot) => querySnapshot.docs.map((doc) => doc.id).toList());
   }
+
 
   Future<ChatModel?> getChatByIdWithoutMessages(String chatId) async {
     User? currentUser = auth.currentUser;
