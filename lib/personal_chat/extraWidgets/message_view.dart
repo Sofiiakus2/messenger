@@ -32,7 +32,6 @@ class MessageView extends StatelessWidget {
           if (!isSenderMe)
             CircleAvatar(
               radius: 24,
-             // backgroundImage: NetworkImage(companion!.image!),
               backgroundColor: Colors.grey[200],
             ),
           if (isSenderMe)
@@ -115,7 +114,7 @@ class MessageView extends StatelessWidget {
           if (isSenderMe)
             CircleAvatar(
               radius: 24,
-              backgroundImage: NetworkImage('https://wallart.ua/wpmd/5986-orig.jpg'),
+              backgroundImage: const NetworkImage('https://wallart.ua/wpmd/5986-orig.jpg'),
               backgroundColor: Colors.grey[200],
             ),
           if (!isSenderMe)

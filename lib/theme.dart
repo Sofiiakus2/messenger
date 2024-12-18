@@ -14,12 +14,12 @@ final lightTheme = ThemeData(
   useMaterial3: true,
   primaryColor: primaryColor,
   textTheme: textTheme,
-  popupMenuTheme: PopupMenuThemeData(
+  popupMenuTheme: const PopupMenuThemeData(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(16)),
     ),
   ),
-  dividerTheme: DividerThemeData(
+  dividerTheme: const DividerThemeData(
     color: Colors.black,
     thickness: 1,
     space: 10,

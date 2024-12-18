@@ -14,13 +14,6 @@ class AllChats extends StatelessWidget {
       final chats = chatController.chats;
       final companions = chatController.companions;
 
-      chats.sort((a, b) {
-        if (a.lastMessageTime == null || b.lastMessageTime == null) {
-          return 0;
-        }
-        return b.lastMessageTime!.compareTo(a.lastMessageTime!);
-      });
-
       return Padding(
         padding: const EdgeInsets.only(top: 180),
         child: Container(
@@ -42,7 +35,9 @@ class AllChats extends StatelessWidget {
               ),
             ],
           ),
-          child: ListView.builder(
+          child: chats.isEmpty
+            ? Center(child: Text('У вас ще немає чатів', style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.black),),)
+         : ListView.builder(
             itemCount: chats.length,
             itemBuilder: (context, index) {
               final chat = chats[index];

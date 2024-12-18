@@ -15,8 +15,9 @@ class MessageActions extends StatelessWidget {
   final Function() replyMessage;
   final Function() hideActions;
   final Function() copyAction;
+  final Function() forwardAction;
 
-  const MessageActions({
+  const MessageActions({super.key,
     required this.currentUserId,
     required this.selectedMessageIndex,
     required this.messages,
@@ -26,6 +27,7 @@ class MessageActions extends StatelessWidget {
     required this.replyMessage,
     required this.hideActions,
     required this.copyAction,
+    required this.forwardAction,
   });
 
   @override
@@ -65,15 +67,15 @@ class MessageActions extends StatelessWidget {
                         "Редагувати",
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 18),
                       ),
-                      Icon(Icons.edit, color: Colors.black),
+                      const Icon(Icons.edit, color: Colors.black),
                     ],
                   ),
                 ),
               if (messages[selectedMessageIndex].senderId == currentUserId)
                 Container(
                   width: 170,
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  child: Divider(
+                  margin: const EdgeInsets.symmetric(vertical: 5),
+                  child: const Divider(
                   ),
                 ),
               GestureDetector(
@@ -88,15 +90,15 @@ class MessageActions extends StatelessWidget {
                       "Відповісти",
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 18),
                     ),
-                    Icon(Icons.reply_sharp, color: Colors.black),
+                    const Icon(Icons.reply_sharp, color: Colors.black),
 
                   ],
                 ),
               ),
               Container(
                 width: 170,
-                margin: EdgeInsets.symmetric(vertical: 5),
-                child: Divider(
+                margin: const EdgeInsets.symmetric(vertical: 5),
+                child: const Divider(
                 ),
               ),
               GestureDetector(
@@ -127,22 +129,21 @@ class MessageActions extends StatelessWidget {
                       "Копіювати",
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 18),
                     ),
-                    Icon(Icons.file_copy_rounded, color: Colors.black),
+                    const Icon(Icons.file_copy_rounded, color: Colors.black),
 
                   ],
                 ),
               ),
               Container(
                 width: 170,
-                margin: EdgeInsets.symmetric(vertical: 5),
-                child: Divider(
+                margin: const EdgeInsets.symmetric(vertical: 5),
+                child: const Divider(
                 ),
               ),
               GestureDetector(
                 onTap: () {
-                  // Handle forward
+                  forwardAction();
                   hideActions();
-                  // Add your forward message logic here
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -154,7 +155,7 @@ class MessageActions extends StatelessWidget {
                     Transform(
                       alignment: Alignment.center,
                       transform: Matrix4.rotationY(pi),
-                      child: Icon(Icons.reply_sharp, color: Colors.black),
+                      child: const Icon(Icons.reply_sharp, color: Colors.black),
                     ),
 
                   ],
@@ -162,8 +163,8 @@ class MessageActions extends StatelessWidget {
               ),
               Container(
                 width: 170,
-                margin: EdgeInsets.symmetric(vertical: 5),
-                child: Divider(
+                margin: const EdgeInsets.symmetric(vertical: 5),
+                child: const Divider(
                 ),
               ),
               GestureDetector(
@@ -178,10 +179,10 @@ class MessageActions extends StatelessWidget {
                       "Видалити",
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: 18,
-                        color: Color(0xFF8C0809),
+                        color: const Color(0xFF8C0809),
                       ),
                     ),
-                    Icon(Icons.delete, color: Color(0xFF8C0809)),
+                    const Icon(Icons.delete, color: Color(0xFF8C0809)),
                   ],
                 ),
               ),

@@ -25,13 +25,13 @@ class _PersonalAccountState extends State<PersonalAccount> {
           stream: UserRepository().getUserInfo(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
               return Center(child: Text('Помилка: ${snapshot.error}'));
             }
             if (!snapshot.hasData) {
-              return Center(child: Text('Користувача не знайдено'));
+              return const Center(child: Text('Користувача не знайдено'));
             }
 
             final user = snapshot.data!;
@@ -88,9 +88,9 @@ class _PersonalAccountState extends State<PersonalAccount> {
                                 .labelMedium
                                 ?.copyWith(fontSize: 24),
                           )
-                              : SizedBox.shrink(),
+                              : const SizedBox.shrink(),
 
-                          SizedBox(height: 20,),
+                          const SizedBox(height: 20,),
                           user.email.isNotEmpty
                               ? Text(
                             user.email,
@@ -100,9 +100,9 @@ class _PersonalAccountState extends State<PersonalAccount> {
                                 .labelMedium
                                 ?.copyWith(fontSize: 20, color: secondaryColor, decoration: TextDecoration.underline ),
                           )
-                              : SizedBox.shrink(),
+                              : const SizedBox.shrink(),
 
-                          SizedBox(height: 20,),
+                          const SizedBox(height: 20,),
                           ElevatedButton(
                             onPressed: () {
                             },
@@ -123,11 +123,11 @@ class _PersonalAccountState extends State<PersonalAccount> {
                                     fontWeight: FontWeight.w900,
                                   ),
                                 ),
-                                Icon(Icons.navigate_next_outlined)
+                                const Icon(Icons.navigate_next_outlined)
                               ],
                             ),
                           ),
-                          SizedBox(height: 10,),
+                          const SizedBox(height: 10,),
                           ElevatedButton(
                             onPressed: () {
                             },
@@ -148,7 +148,7 @@ class _PersonalAccountState extends State<PersonalAccount> {
                                     fontWeight: FontWeight.w900,
                                   ),
                                 ),
-                                Icon(Icons.navigate_next_outlined)
+                                const Icon(Icons.navigate_next_outlined)
                               ],
                             ),
                           ),
@@ -209,13 +209,13 @@ class _PersonalAccountState extends State<PersonalAccount> {
                                 },
                                 child: Row(
                                   children: [
-                                    Icon(Icons.edit, color: Colors.white, size: 24,),
-                                    SizedBox(width: 10),
+                                    const Icon(Icons.edit, color: Colors.white, size: 24,),
+                                    const SizedBox(width: 10),
                                     Text("Редагувати", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white)),
                                   ],
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                             ],
                           ),
                         ),

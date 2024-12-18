@@ -22,10 +22,17 @@ class UserRepository{
 
   Future<List<UserModel>> getAllUsers() async {
     try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        return [];  
+      }
+
       final querySnapshot = await firestore.collection('users').get();
-      return querySnapshot.docs.map((doc) {
-        return UserModel.fromMap(doc.data(), doc.id);
-      }).toList();
+
+      return querySnapshot.docs
+          .where((doc) => doc.id != currentUser.uid)
+          .map((doc) => UserModel.fromMap(doc.data(), doc.id))
+          .toList();
     } catch (e) {
       return [];
     }
@@ -42,7 +49,7 @@ class UserRepository{
         return UserModel.fromMap(companionSnapshot.data()!, companionSnapshot.id);
       }
     } catch (e) {
-      print('Error fetching user: $e');
+      rethrow;
     }
     return null;
   }

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:messanger/models/message_model.dart';
-import 'package:uuid/uuid.dart';
 
 class MessagesRepository{
 
@@ -12,16 +11,9 @@ class MessagesRepository{
     try {
       final messageRef = firestore.collection('chats').doc(chatId).collection('messages');
       await messageRef.add(newMessage.toMap());
-      // await messageRef.add({
-      //   'id': const Uuid().v4(),
-      //   'senderId': newMessage.senderId,
-      //   'text': newMessage.text,
-      //   'time': newMessage.time,
-      //   'status': newMessage.status,
-      //   'replyMessage' : newMessage.replyMessage
-      // });
+
     } catch (e) {
-      print("Error sending message: $e");
+      rethrow;
     }
   }
 
@@ -41,7 +33,7 @@ class MessagesRepository{
         return MessageModel.fromMap(lastMessageData);
       }
     } catch (e) {
-      print('Error fetching last message by chat ID: $e');
+      rethrow;
     }
     return null;
   }
@@ -56,9 +48,8 @@ class MessagesRepository{
 
       await messageRef.delete();
 
-      print('Message with id $messageId has been deleted.');
     } catch (e) {
-      print('Error deleting message: $e');
+      rethrow;
     }
   }
 
@@ -77,9 +68,8 @@ class MessagesRepository{
         'text': updatedText,
         'isEdited': true,
       });
-      print("Message updated successfully");
     } catch (e) {
-      print("Error updating message: $e");
+      rethrow;
     }
   }
 

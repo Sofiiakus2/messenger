@@ -33,11 +33,11 @@ class _ReplyMessageViewState extends State<ReplyMessageView> {
   Widget build(BuildContext context) {
     return Container(
       width: 250,
-      margin: EdgeInsets.only(right: 20, bottom: 5),
-      padding: EdgeInsets.only(left: 5, bottom: 5, top: 5),
+      margin: const EdgeInsets.only(right: 20, bottom: 5),
+      padding: const EdgeInsets.only(left: 5, bottom: 5, top: 5),
       decoration: BoxDecoration(
         color: thirdColor.withOpacity(0.3),
-        borderRadius: BorderRadius.all(Radius.circular(10),),
+        borderRadius: const BorderRadius.all(Radius.circular(10),),
         border: const Border(
           left: BorderSide(
             color: thirdColor,

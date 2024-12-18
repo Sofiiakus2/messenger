@@ -11,7 +11,7 @@ class MessageList extends StatelessWidget {
   final UserModel? companion;
   final Function(int, LongPressStartDetails) onLongPressStart;
 
-  const MessageList({
+  const MessageList({super.key,
     required this.scrollController,
     required this.messages,
     required this.currentUserId,

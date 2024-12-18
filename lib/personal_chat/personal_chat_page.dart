@@ -1,7 +1,9 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:messanger/models/message_model.dart';
+import 'package:messanger/personal_chat/extraWidgets/forward_bottom_drawer.dart';
 import 'package:messanger/repositories/auth_local_storage.dart';
 import 'package:messanger/repositories/messages_repository.dart';
 import 'package:messanger/theme.dart';
@@ -23,6 +25,7 @@ class PersonalChatPage extends StatefulWidget {
 class _PersonalChatPageState extends State<PersonalChatPage> {
   final ScrollController _scrollController = ScrollController();
   List<MessageModel> messages = [];
+  MessageModel? forwardMessage;
   ChatModel? chat;
   String? chatId;
   UserModel? companion;
@@ -32,6 +35,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   Offset? _tapPosition;
   bool isEdit = false;
   bool isReply = false;
+  bool isForward = false;
 
   @override
   void initState() {
@@ -43,6 +47,12 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     currentUserId = await AuthLocalStorage().getUserId();
     final arguments = Get.arguments;
     chatId = arguments['chatId'];
+    forwardMessage = arguments['forwardMessage'];
+    if(forwardMessage != null){
+      setState(() {
+        isForward = true;
+      });
+    }
     chat = await ChatRepository().getChatById(chatId!);
 
     UserModel.getChatCompanion(chat!).then((companionUser) {
@@ -59,6 +69,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   void _toggleEdit(bool editState) {
     setState(() {
       isReply = false;
+      isForward = false;
       isEdit = editState;
     });
   }
@@ -66,8 +77,18 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   void _toggleReply(bool replyState) {
     setState(() {
       isEdit = false;
+      isForward = false;
       isReply = replyState;
     });
+  }
+
+  void _toggleForward(MessageModel replyMessage) {
+    setState(() {
+      isEdit = false;
+      isReply = false;
+    });
+
+    _showBottomSheet(replyMessage);
   }
 
 
@@ -89,7 +110,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
 
       await MessagesRepository().deleteMessage(chatId!, messageId);
     } catch (e) {
-      print('Error deleting message: $e');
+      rethrow;
     }
   }
 
@@ -114,19 +135,45 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     try {
       await MessagesRepository().sendMessage(chat!.id, newMessage);
     } catch (e) {
-      print('Error sending message: $e');
+      rethrow;
     }
   }
+
+  void _saveForwardMessage(MessageModel forwMessage, String newText) async{
+    if (currentUserId == null || companion == null) return;
+
+    final newMessage = MessageModel(
+        senderId: currentUserId!,
+        text: newText,
+        time: DateTime.now(),
+        status: false,
+        isEdited: false,
+        replyMessage: forwMessage
+    );
+
+    setState(() {
+      messages.insert(0, newMessage);
+    });
+
+    scrollChat();
+
+    try {
+      await MessagesRepository().sendMessage(chat!.id, newMessage);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 
   void _saveEditedMessage(String messageId, String newText) async {
 
       setState(() {
-        messages[_selectedMessageIndex].text = newText!;
+        messages[_selectedMessageIndex].text = newText;
       });
       try {
         await MessagesRepository().updateMessage(chatId!,messageId, newText);
       } catch (e) {
-        print('Error updating message: $e');
+        rethrow;
       }
 
       setState(() {
@@ -156,12 +203,12 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     try {
       await MessagesRepository().sendMessage(chat!.id, newMessage);
     } catch (e) {
-      print('Error sending message: $e');
+      rethrow;
     }
   }
 
   void scrollChat() {
-    Future.delayed(Duration(milliseconds: 100), () {
+    Future.delayed(const Duration(milliseconds: 100), () {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_scrollController.hasClients) {
           _scrollController.jumpTo(
@@ -175,7 +222,6 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   void _hideMessageActions() {
     setState(() {
       _showActions = false;
-     // _selectedMessageIndex = -1;
     });
   }
 
@@ -184,6 +230,15 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
 
     Clipboard.setData(ClipboardData(text: textToCopy));
 
+  }
+
+  void _showBottomSheet(MessageModel replyMessage) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return ForwardBottomDrawer(forwardMessage: replyMessage,);
+      },
+    );
   }
 
 
@@ -251,12 +306,19 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
                       chatId: '',
                       isEdit: isEdit,
                       isReply: isReply,
-                      text: isEdit || isReply ? messages[_selectedMessageIndex].text : null,
+                      isForward: isForward,
+                      message: isEdit || isReply
+                          ? messages[_selectedMessageIndex]
+                          : isForward
+                              ? forwardMessage
+                              : null,
                       onMessageSent: (text) {
                         if (isEdit) {
                           _saveEditedMessage(messages[_selectedMessageIndex].id!, text);
                         } else if(isReply){
                           _saveReplyMessage(messages[_selectedMessageIndex], text);
+                        }else if(isForward){
+                          _saveForwardMessage(forwardMessage!, text);
                         }
                         else {
                           addMessage(text);
@@ -280,6 +342,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
               replyMessage: () => _toggleReply(true),
               copyAction: _copyMessageAction,
               hideActions: _hideMessageActions,
+              forwardAction: () => _toggleForward(messages[_selectedMessageIndex]),
             ),
         ],
       ),

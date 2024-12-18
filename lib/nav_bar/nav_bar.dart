@@ -1,7 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:messanger/repositories/user_repository.dart';
 import 'package:messanger/theme.dart';
 
@@ -24,13 +22,13 @@ class _NavBarState extends State<NavBar> {
       stream: UserRepository().getUserInfo(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
           return Center(child: Text('Помилка: ${snapshot.error}'));
         }
         if (!snapshot.hasData) {
-          return Center(child: Text('Користувача не знайдено'));
+          return const Center(child: Text('Користувача не знайдено'));
         }
 
         final user = snapshot.data!;
@@ -58,7 +56,7 @@ class _NavBarState extends State<NavBar> {
                       Stack(
                         alignment: Alignment.center,
                         children: [
-                          CircleAvatar(
+                          const CircleAvatar(
                             radius: 40,
                             backgroundColor: Colors.white,
                           ),
@@ -75,7 +73,7 @@ class _NavBarState extends State<NavBar> {
                       )
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ListTile(
                     leading: const Icon(Icons.account_box_rounded, color: Colors.white, size: 36),
                     title: Text(

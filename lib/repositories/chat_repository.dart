@@ -82,7 +82,7 @@ class ChatRepository{
         });
       }
     } catch (e) {
-      print('Error adding chat ID to users: $e');
+      rethrow;
     }
   }
 
@@ -117,7 +117,7 @@ class ChatRepository{
         );
       }
     } catch (e) {
-      print('Error fetching chat by ID: $e');
+      rethrow;
     }
     return null;
   }
@@ -142,7 +142,7 @@ class ChatRepository{
           .get();
 
       final messages = messageSnapshot.docs
-          .map((doc) => MessageModel.fromMap(doc.data() as Map<String, dynamic>))
+          .map((doc) => MessageModel.fromMap(doc.data()))
           .toList();
 
 
@@ -161,8 +161,7 @@ class ChatRepository{
             : null,
       );
     } catch (e) {
-      print('Error fetching chat by ID: $e');
-      return null;
+      rethrow;
     }
   }
 

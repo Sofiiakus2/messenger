@@ -22,6 +22,14 @@ class ChatController extends GetxController {
     }
 
     final companionsData = await Future.wait(companionFutures);
+
+    filteredChats.sort((a, b) {
+      if (a.lastMessageTime == null || b.lastMessageTime == null) {
+        return 0;
+      }
+      return b.lastMessageTime!.compareTo(a.lastMessageTime!);
+    });
+
     chats.assignAll(filteredChats);
     companions.assignAll(Map.fromEntries(companionsData));
 
