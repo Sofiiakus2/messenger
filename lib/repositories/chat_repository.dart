@@ -141,8 +141,9 @@ class ChatRepository{
           .limit(100)
           .get();
 
+
       final messages = messageSnapshot.docs
-          .map((doc) => MessageModel.fromMap(doc.data()))
+          .map((doc) => MessageModel.fromMap(doc.data(), doc.id))
           .toList();
 
 

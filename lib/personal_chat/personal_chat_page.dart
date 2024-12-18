@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/_http/_html/_file_decoder_html.dart';
 import 'package:messanger/models/message_model.dart';
 import 'package:messanger/personal_chat/extraWidgets/forward_bottom_drawer.dart';
 import 'package:messanger/repositories/auth_local_storage.dart';
@@ -64,6 +65,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     setState(() {
       messages = chat!.messages!;
     });
+
   }
 
   void _toggleEdit(bool editState) {
@@ -182,6 +184,23 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
 
   }
 
+  Future<void> addFileMessage(MessageModel file) async {
+    if (currentUserId == null || companion == null) return;
+
+    setState(() {
+      messages.insert(0, file);
+    });
+
+    //scrollChat();
+
+    try {
+      //await MessagesRepository().sendMessage(chat!.id, newMessage);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+
 
   void addMessage(String text) async {
     if (currentUserId == null || companion == null) return;
@@ -212,7 +231,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_scrollController.hasClients) {
           _scrollController.jumpTo(
-            _scrollController.position.maxScrollExtent,
+            _scrollController.position.minScrollExtent,
           );
         }
       });
@@ -313,6 +332,9 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
                               ? forwardMessage
                               : null,
                       onMessageSent: (text) {
+                        // if (text.startsWith("FILE:")){
+                        //   addFileMessage(text);
+                        // }else
                         if (isEdit) {
                           _saveEditedMessage(messages[_selectedMessageIndex].id!, text);
                         } else if(isReply){
@@ -324,6 +346,10 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
                           addMessage(text);
                         }
                         _toggleEdit(false);
+                      },
+                      onFileSent: (file){
+                        print('send');
+                        addFileMessage(file);
                       },
                     ),
                   ],

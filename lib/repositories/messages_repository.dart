@@ -29,8 +29,8 @@ class MessagesRepository{
           .get();
 
       if (messageSnapshot.docs.isNotEmpty) {
-        final lastMessageData = messageSnapshot.docs.first.data();
-        return MessageModel.fromMap(lastMessageData);
+        final lastMessageData = messageSnapshot.docs.first;
+        return MessageModel.fromMap(lastMessageData.data(), lastMessageData.id);
       }
     } catch (e) {
       rethrow;

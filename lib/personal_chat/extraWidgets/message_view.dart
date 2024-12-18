@@ -22,8 +22,21 @@ class MessageView extends StatelessWidget {
   final int index;
   final bool status;
 
+  String formatFileSize(int sizeInBytes) {
+    double sizeInMB = sizeInBytes / (1024 * 1024);
+    double sizeInGB = sizeInBytes / (1024 * 1024 * 1024);
+
+    if (sizeInGB >= 1) {
+      return "${sizeInGB.toStringAsFixed(2)} GB";
+    } else {
+      return "${sizeInMB.toStringAsFixed(2)} MB";
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.all(6),
       child: Row(
@@ -79,7 +92,33 @@ class MessageView extends StatelessWidget {
                     : const Radius.circular(30),
               ),
             ),
-            child: Column(
+            child: messages[index].messageType == MessageType.file
+              ? Container(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.file_present_rounded,
+                        size: 44,
+                        color: thirdColor,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            messages[index].fileName!,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: thirdColor, fontSize: 14),
+                          ),
+                          Text(
+                            formatFileSize(messages[index].fileSize!),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: primaryColor, fontSize: 14),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+            )
+              : Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 if(messages[index].replyMessage != null)

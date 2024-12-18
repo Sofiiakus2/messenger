@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
+enum MessageType { text, file, photo, video }
 
 class MessageModel{
   String? id;
@@ -9,6 +10,11 @@ class MessageModel{
   DateTime time;
   bool status;
   bool isEdited;
+  MessageType? messageType;
+  String? filePath;
+  String? fileName;
+  int? fileSize;
+
   MessageModel? replyMessage;
 
   MessageModel({
@@ -19,18 +25,22 @@ class MessageModel{
    required this.status,
    required this.isEdited,
     this.replyMessage,
+    this.messageType,
+    this.filePath,
+    this.fileName,
+    this.fileSize,
 });
 
-  factory MessageModel.fromMap(Map<String, dynamic> map) {
+  factory MessageModel.fromMap(Map<String, dynamic> map, String documentId) {
     return MessageModel(
-      id: map['id'] ?? '',
+      id: documentId,
       senderId: map['senderId'] as String,
       text: map['text'] as String,
       time: (map['time'] as Timestamp).toDate(),
       status: map['status'] as bool,
       isEdited: map['isEdited'] ?? false,
       replyMessage: map['replyMessage'] != null
-          ? MessageModel.fromMap(map['replyMessage'] as Map<String, dynamic>)
+          ? MessageModel.fromMap(map['replyMessage'] as Map<String, dynamic>, '')
           : null,
     );
   }

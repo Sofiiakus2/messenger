@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:messanger/personal_chat/extraWidgets/file_attachment_button.dart';
 
 import '../../models/message_model.dart';
 import '../../theme.dart';
@@ -12,6 +13,7 @@ class SendingBlock extends StatefulWidget {
     this.message,
     required this.onMessageSent,
     required this.isForward,
+    required this.onFileSent,
   });
 
   final String chatId;
@@ -20,6 +22,7 @@ class SendingBlock extends StatefulWidget {
   final bool isForward;
   final MessageModel? message;
   final Function(String) onMessageSent;
+  final Function(MessageModel) onFileSent;
 
   @override
   State<SendingBlock> createState() => _SendingBlockState();
@@ -28,6 +31,7 @@ class SendingBlock extends StatefulWidget {
 class _SendingBlockState extends State<SendingBlock> {
   TextEditingController messageController = TextEditingController();
   bool isEmpty = true;
+  List<String> attachedFiles = [];
 
   void sendMessage() {
     final text = messageController.text.trim();
@@ -38,6 +42,11 @@ class _SendingBlockState extends State<SendingBlock> {
         isEmpty = true;
       });
     }
+  }
+
+  void sendFileMessage(MessageModel filePath) {
+    print('object');
+    widget.onFileSent(filePath);
   }
 
   void cancelEditMessage() {
@@ -201,10 +210,10 @@ class _SendingBlockState extends State<SendingBlock> {
                       scrollPhysics: const BouncingScrollPhysics(), // Додатково для плавного скролу
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.photo_camera_back, color: thirdColor),
-                  ),
+                 FileAttachmentButton(onFileSelected: (file){
+                  print('yes');
+                  sendFileMessage(file);
+                 })
                 ],
               ),
             ),

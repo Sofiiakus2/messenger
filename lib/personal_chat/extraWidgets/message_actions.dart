@@ -32,9 +32,34 @@ class MessageActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    const blockWidth = 180.0;
+    const blockHeight = 250.0;
+
+    double adjustedLeft = tapPosition.dx;
+    double adjustedTop = tapPosition.dy;
+
+    if (tapPosition.dx + blockWidth > screenWidth) {
+      adjustedLeft = screenWidth - blockWidth - 10;
+    }
+
+    if (tapPosition.dy + blockHeight > screenHeight) {
+      adjustedTop = screenHeight - blockHeight - 10;
+    }
+
+    if (tapPosition.dx < 0) {
+      adjustedLeft = 10;
+    }
+
+    if (tapPosition.dy < 0) {
+      adjustedTop = 10;
+    }
+
     return Positioned(
-      top: tapPosition.dy,
-      left: tapPosition.dx,
+      top: adjustedTop,
+      left: adjustedLeft,
       child: GestureDetector(
         onTap: hideActions,
         child: Container(
@@ -169,6 +194,10 @@ class MessageActions extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
+                  print('--------------------');
+                  print(selectedMessageIndex);
+                  print(messages[selectedMessageIndex]);
+                  print(messages[selectedMessageIndex].id);
                   deleteMessage(messages[selectedMessageIndex].id!);
                   hideActions();
                 },
