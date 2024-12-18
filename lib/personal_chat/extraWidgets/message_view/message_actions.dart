@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:messanger/theme.dart';
 
-import '../../models/message_model.dart';
+import '../../../models/message_model.dart';
 
 class MessageActions extends StatelessWidget {
   final String? currentUserId;
@@ -194,10 +194,6 @@ class MessageActions extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  print('--------------------');
-                  print(selectedMessageIndex);
-                  print(messages[selectedMessageIndex]);
-                  print(messages[selectedMessageIndex].id);
                   deleteMessage(messages[selectedMessageIndex].id!);
                   hideActions();
                 },

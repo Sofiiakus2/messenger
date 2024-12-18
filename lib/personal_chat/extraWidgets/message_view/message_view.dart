@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:messanger/personal_chat/extraWidgets/reply_message_view.dart';
+import 'package:messanger/personal_chat/extraWidgets/message_view/message_view_by_types/file_message_view.dart';
+import 'package:messanger/personal_chat/extraWidgets/message_view/message_view_by_types/photo_message_view.dart';
+import 'package:messanger/personal_chat/extraWidgets/message_view/message_view_by_types/reply_message_view.dart';
+import 'package:messanger/personal_chat/extraWidgets/message_view/message_view_by_types/text_message_view.dart';
 
-import '../../models/message_model.dart';
-import '../../models/user_model.dart';
-import '../../theme.dart';
+import '../../../models/message_model.dart';
+import '../../../models/user_model.dart';
+import '../../../theme.dart';
 
 class MessageView extends StatelessWidget {
   const MessageView({
@@ -21,17 +24,6 @@ class MessageView extends StatelessWidget {
   final List<MessageModel> messages;
   final int index;
   final bool status;
-
-  String formatFileSize(int sizeInBytes) {
-    double sizeInMB = sizeInBytes / (1024 * 1024);
-    double sizeInGB = sizeInBytes / (1024 * 1024 * 1024);
-
-    if (sizeInGB >= 1) {
-      return "${sizeInGB.toStringAsFixed(2)} GB";
-    } else {
-      return "${sizeInMB.toStringAsFixed(2)} MB";
-    }
-  }
 
 
   @override
@@ -75,7 +67,13 @@ class MessageView extends StatelessWidget {
             ),
           Container(
             width: 270,
-            padding: const EdgeInsets.only(left: 20, top: 10),
+            padding: EdgeInsets.only(left: 20, top: 10,
+                right: messages[index].isEdited
+                  ? 0
+                  : 20,
+                bottom: messages[index].isEdited
+                    ? 0
+                    : 10, ),
             constraints: const BoxConstraints(
               minHeight: 50,
             ),
@@ -92,63 +90,15 @@ class MessageView extends StatelessWidget {
                     : const Radius.circular(30),
               ),
             ),
-            child: messages[index].messageType == MessageType.file
-              ? Container(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.file_present_rounded,
-                        size: 44,
-                        color: thirdColor,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            messages[index].fileName!,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: thirdColor, fontSize: 14),
-                          ),
-                          Text(
-                            formatFileSize(messages[index].fileSize!),
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: primaryColor, fontSize: 14),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-            )
-              : Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if(messages[index].replyMessage != null)
-                  ReplyMessageView(message: messages[index].replyMessage!,),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    messages[index].text,
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelSmall
-                        ?.copyWith(color: Colors.black),
-                  ),
-                ),
-                if(messages[index].isEdited)
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 20),
-                    child: Text(
-                      'Змінено',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: primaryColor),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            child: switch (messages[index].messageType){
+              null => throw UnimplementedError(),
+              MessageType.text => TextMessageView(message: messages[index],),
+              MessageType.file => FileMessageView(file: messages[index],),
+              MessageType.photo => const PhotoMessageView(),
+              MessageType.video => const PhotoMessageView(),
+              MessageType.archive => FileMessageView(file: messages[index],),
+              MessageType.document => FileMessageView(file: messages[index],),
+            }
           ),
           if (isSenderMe)
             CircleAvatar(

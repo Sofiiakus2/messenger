@@ -3,7 +3,7 @@ import 'package:messanger/models/message_model.dart';
 import 'package:messanger/models/user_model.dart';
 import 'package:messanger/repositories/user_repository.dart';
 
-import '../../theme.dart';
+import '../../../../theme.dart';
 
 class ReplyMessageView extends StatefulWidget {
   const ReplyMessageView({super.key, required this.message});

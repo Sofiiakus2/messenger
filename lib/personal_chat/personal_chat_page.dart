@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/_http/_html/_file_decoder_html.dart';
 import 'package:messanger/models/message_model.dart';
-import 'package:messanger/personal_chat/extraWidgets/forward_bottom_drawer.dart';
+import 'package:messanger/personal_chat/extraWidgets/message_view/forward_bottom_drawer.dart';
 import 'package:messanger/repositories/auth_local_storage.dart';
 import 'package:messanger/repositories/messages_repository.dart';
 import 'package:messanger/theme.dart';
@@ -12,8 +12,8 @@ import '../models/chat_model.dart';
 import '../models/user_model.dart';
 import '../repositories/chat_repository.dart';
 import 'extraWidgets/custom_app_bar.dart';
-import 'extraWidgets/message_actions.dart';
-import 'extraWidgets/message_list.dart';
+import 'extraWidgets/message_view/message_actions.dart';
+import 'extraWidgets/message_view/message_list.dart';
 import 'extraWidgets/sending_block.dart';
 
 class PersonalChatPage extends StatefulWidget {
@@ -210,7 +210,8 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
       text: text,
       time: DateTime.now(),
       status: false,
-      isEdited: false
+      isEdited: false,
+      messageType: MessageType.text
     );
 
     setState(() {
@@ -348,7 +349,6 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
                         _toggleEdit(false);
                       },
                       onFileSent: (file){
-                        print('send');
                         addFileMessage(file);
                       },
                     ),

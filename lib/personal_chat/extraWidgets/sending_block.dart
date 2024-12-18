@@ -45,7 +45,6 @@ class _SendingBlockState extends State<SendingBlock> {
   }
 
   void sendFileMessage(MessageModel filePath) {
-    print('object');
     widget.onFileSent(filePath);
   }
 
@@ -211,7 +210,6 @@ class _SendingBlockState extends State<SendingBlock> {
                     ),
                   ),
                  FileAttachmentButton(onFileSelected: (file){
-                  print('yes');
                   sendFileMessage(file);
                  })
                 ],

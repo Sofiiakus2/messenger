@@ -4,10 +4,10 @@ import 'package:messanger/models/chat_model.dart';
 import 'package:messanger/personal_chat/personal_chat_page.dart';
 import 'package:messanger/repositories/chat_repository.dart';
 
-import '../../models/message_model.dart';
-import '../../models/user_model.dart';
-import '../../repositories/user_repository.dart';
-import '../../theme.dart';
+import '../../../models/message_model.dart';
+import '../../../models/user_model.dart';
+import '../../../repositories/user_repository.dart';
+import '../../../theme.dart';
 
 class ForwardBottomDrawer extends StatefulWidget {
   const ForwardBottomDrawer({super.key, required this.forwardMessage});

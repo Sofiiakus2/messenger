@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
-enum MessageType { text, file, photo, video }
+enum MessageType { text, file, photo, video, archive, document }
 
 class MessageModel{
   String? id;
@@ -39,6 +39,13 @@ class MessageModel{
       time: (map['time'] as Timestamp).toDate(),
       status: map['status'] as bool,
       isEdited: map['isEdited'] ?? false,
+      messageType: map['messageType'] != null
+          ? MessageType.values.firstWhere(
+              (e) => e.toString() == 'MessageType.' + map['messageType'])
+          : null,
+      filePath: map['filePath'] as String?,
+      fileName: map['fileName'] as String?,
+      fileSize: map['fileSize'] as int?,
       replyMessage: map['replyMessage'] != null
           ? MessageModel.fromMap(map['replyMessage'] as Map<String, dynamic>, '')
           : null,
@@ -54,6 +61,10 @@ class MessageModel{
       'time': Timestamp.fromDate(time),
       'status': status,
       'isEdited': isEdited,
+      'messageType': messageType?.toString().split('.').last, // збереження типу повідомлення
+      'filePath': filePath,
+      'fileName': fileName,
+      'fileSize': fileSize,
       'replyMessage': replyMessage?.toMap(),
     };
   }
