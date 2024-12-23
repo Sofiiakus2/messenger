@@ -51,26 +51,31 @@ class _NavBarState extends State<NavBar> {
                   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          const CircleAvatar(
-                            radius: 40,
-                            backgroundColor: Colors.white,
-                          ),
-                          CircleAvatar(
-                            radius: 36,
-                          //  backgroundImage: NetworkImage(user.image),
-                            backgroundColor: Colors.grey[200],
-                          ),
-                        ],
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 15),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            const CircleAvatar(
+                              radius: 40,
+                              backgroundColor: Colors.white,
+                            ),
+                            CircleAvatar(
+                              radius: 36,
+                            //  backgroundImage: NetworkImage(user.image),
+                              backgroundColor: Colors.grey[200],
+                            ),
+                          ],
+                        ),
                       ),
                       Text(
                         user.name,
                         style: Theme.of(context).textTheme.titleMedium,
-                      )
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
+                      ),
                     ],
                   ),
                   const SizedBox(height: 20),

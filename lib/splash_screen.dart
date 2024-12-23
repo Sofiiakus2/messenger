@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:messanger/repositories/auth_local_storage.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -10,6 +11,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final LocalAuthentication _localAuthentication = LocalAuthentication();
+
   void checkUserLoginStatus() async {
     String? userId = await AuthLocalStorage().getUserId();
 
@@ -20,6 +23,38 @@ class _SplashScreenState extends State<SplashScreen> {
         Get.offNamed('/login');
       }
     });
+    // if (userId != null){
+    //   bool isAuthenticated = await authenticateUser();
+    //   print(isAuthenticated);
+    //
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     Get.offNamed('/');
+    //   });
+    // }else{
+    //   Get.offNamed('/login');
+    //
+    // }
+
+  }
+
+  Future<bool> authenticateUser() async {
+    try {
+      bool isBiometricAvailable = await _localAuthentication.canCheckBiometrics;
+      if (!isBiometricAvailable) {
+        print('Біометрія недоступна');
+        return false;
+      }
+      return await _localAuthentication.authenticate(
+        localizedReason: 'Authenticate using biometrics',
+        options: const AuthenticationOptions(
+          useErrorDialogs: true,
+          stickyAuth: true,
+        ),
+      );
+    } catch (e) {
+      print('Помилка під час біометричної автентифікації: $e');
+      return false;
+    }
   }
 
   @override

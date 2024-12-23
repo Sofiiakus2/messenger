@@ -206,7 +206,7 @@ class _SendingBlockState extends State<SendingBlock> {
                         border: InputBorder.none,
                       ),
                       cursorColor: thirdColor,
-                      scrollPhysics: const BouncingScrollPhysics(), // Додатково для плавного скролу
+                      scrollPhysics: const BouncingScrollPhysics(),
                     ),
                   ),
                  FileAttachmentButton(onFileSelected: (file){

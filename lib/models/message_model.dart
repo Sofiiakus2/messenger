@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
+//import 'package:intl/intl.dart';
 
 enum MessageType { text, file, photo, video, archive, document }
 
@@ -86,12 +86,17 @@ String formatLastMessageTime(DateTime time) {
   final diff = now.difference(time);
 
   if (time.isAfter(today)) {
-    return DateFormat('HH:mm').format(time);
+    // Формат HH:mm
+    return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   } else if (diff.inDays <= 7) {
-    return DateFormat('EEE').format(time);
+    // Назва дня тижня
+    const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return daysOfWeek[time.weekday - 1];
   } else if (time.year == now.year) {
-    return DateFormat('dd.MM').format(time);
+    // Формат dd.MM
+    return '${time.day.toString().padLeft(2, '0')}.${time.month.toString().padLeft(2, '0')}';
   } else {
-    return DateFormat('dd.MM.yyyy').format(time);
+    // Формат dd.MM.yyyy
+    return '${time.day.toString().padLeft(2, '0')}.${time.month.toString().padLeft(2, '0')}.${time.year}';
   }
 }

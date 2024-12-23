@@ -168,59 +168,59 @@ class _PersonalAccountState extends State<PersonalAccount> {
                   ),
                 ),
 
-                Positioned(
-                  top: 50,
-                  right: 20,
-                  child: IconButton(
-                    icon: const Icon(Icons.more_vert, color: Colors.white, size: 30,),
-                    onPressed: () {
-                      setState(() {
-                        _showActions = !_showActions;
-                      });
-                    },
-                  ),
-                ),
-                if (_showActions)
-                  Positioned(
-                      top: 90,
-                      right: 40,
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _showActions = false;
-                          });
-                        },
-                        child: Container(
-                          width: 200,
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: primaryColor.withOpacity(0.8),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _showActions = false;
-                                  });
-                                },
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.edit, color: Colors.white, size: 24,),
-                                    const SizedBox(width: 10),
-                                    Text("Редагувати", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white)),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                            ],
-                          ),
-                        ),
-                      )
-                  )
+                // Positioned(
+                //   top: 50,
+                //   right: 20,
+                //   child: IconButton(
+                //     icon: const Icon(Icons.more_vert, color: Colors.white, size: 30,),
+                //     onPressed: () {
+                //       setState(() {
+                //         _showActions = !_showActions;
+                //       });
+                //     },
+                //   ),
+                // ),
+                // if (_showActions)
+                //   Positioned(
+                //       top: 90,
+                //       right: 40,
+                //       child: GestureDetector(
+                //         onTap: () {
+                //           setState(() {
+                //             _showActions = false;
+                //           });
+                //         },
+                //         child: Container(
+                //           width: 200,
+                //           padding: const EdgeInsets.all(16),
+                //           decoration: BoxDecoration(
+                //             color: primaryColor.withOpacity(0.8),
+                //             borderRadius: BorderRadius.circular(12),
+                //           ),
+                //           child: Column(
+                //             crossAxisAlignment: CrossAxisAlignment.start,
+                //             mainAxisSize: MainAxisSize.min,
+                //             children: [
+                //               GestureDetector(
+                //                 onTap: () {
+                //                   setState(() {
+                //                     _showActions = false;
+                //                   });
+                //                 },
+                //                 child: Row(
+                //                   children: [
+                //                     const Icon(Icons.edit, color: Colors.white, size: 24,),
+                //                     const SizedBox(width: 10),
+                //                     Text("Редагувати", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white)),
+                //                   ],
+                //                 ),
+                //               ),
+                //               const SizedBox(height: 10),
+                //             ],
+                //           ),
+                //         ),
+                //       )
+                //   )
               ],
             ),
           );

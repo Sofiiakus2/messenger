@@ -123,6 +123,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
         senderId: currentUserId!,
         text: newText,
         time: DateTime.now(),
+        messageType: MessageType.text,
         status: false,
         isEdited: false,
         replyMessage: replyMessage
@@ -147,6 +148,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     final newMessage = MessageModel(
         senderId: currentUserId!,
         text: newText,
+        messageType: MessageType.text,
         time: DateTime.now(),
         status: false,
         isEdited: false,
