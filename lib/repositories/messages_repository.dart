@@ -28,6 +28,7 @@ class MessagesRepository{
           .limit(1)
           .get();
 
+
       if (messageSnapshot.docs.isNotEmpty) {
         final lastMessageData = messageSnapshot.docs.first;
         return MessageModel.fromMap(lastMessageData.data(), lastMessageData.id);

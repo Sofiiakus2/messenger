@@ -9,7 +9,11 @@ class ChatController extends GetxController {
 
   void fetchUserChats() async {
     final chatIds = await ChatRepository().getChatIdsByUserId().first;
-    final chatFutures = chatIds.map((id) => ChatRepository().getChatByIdWithoutMessages(id));
+    final chatFutures = chatIds.map(
+            (id) => ChatRepository()
+            .getChatByIdWithoutMessages(id)
+            .catchError((_) => null)
+    );
     final results = await Future.wait(chatFutures);
 
     final filteredChats = results.whereType<ChatModel>().toList();

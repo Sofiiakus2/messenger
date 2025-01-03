@@ -103,6 +103,7 @@ class ChatRepository{
 
       if (docSnapshot.exists) {
         final data = docSnapshot.data()!;
+
         final lastMessage = await MessagesRepository().getLastMessageByChatId(docSnapshot.id);
 
         return ChatModel(
