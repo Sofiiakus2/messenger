@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:messanger/all_chats/extraWidgets/createChatSheet/create_chat_sheet.dart';
 import 'package:messanger/nav_bar/nav_bar.dart';
 import 'package:messanger/theme.dart';
 
@@ -14,7 +15,15 @@ class ChatsPage extends StatelessWidget {
     return Scaffold(
       drawer: const NavBar(),
       floatingActionButton: FloatingActionButton(
-          onPressed: (){},
+          onPressed: (){
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (BuildContext context) {
+                return CreateChatSheet();
+              },
+            );
+          },
         backgroundColor: primaryColor,
         elevation: 4,
         shape: const CircleBorder(),
