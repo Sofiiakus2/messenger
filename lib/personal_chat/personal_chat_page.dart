@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/_http/_html/_file_decoder_html.dart';
 import 'package:messanger/models/message_model.dart';
 import 'package:messanger/personal_chat/extraWidgets/message_view/forward_bottom_drawer.dart';
 import 'package:messanger/repositories/auth_local_storage.dart';

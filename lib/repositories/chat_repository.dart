@@ -46,6 +46,7 @@ class ChatRepository{
     ChatModel newChat = ChatModel(
       id: '',
       companionsIds: [currentUserId, userId],
+      isGroup: false,
       messages: []
     );
 
@@ -59,6 +60,30 @@ class ChatRepository{
 
     return newChat;
   }
+
+  Future<ChatModel> createGroupChat(List<String> userIds, String currentUserId, String name) async {
+    List<String> companionsIds = [...userIds, currentUserId];
+
+    ChatModel newChat = ChatModel(
+      id: '',
+      name: name,
+      isGroup: true,
+      companionsIds: companionsIds,
+      messages: [     ],
+    );
+
+    final docRef = await firestore.collection('chats').add({
+      'companionsIds': newChat.companionsIds,
+    });
+    MessageModel newMessage = MessageModel(senderId: currentUserId, text: 'Вас додали до чату', time: DateTime.now() , status: false, isEdited: false);
+    newChat.id = docRef.id;
+
+    await addChatIdToUsers(newChat.id, newChat.companionsIds);
+    await MessagesRepository().sendMessage(newChat.id, newMessage);
+
+    return newChat;
+  }
+
 
   Future<void> addChatIdToUsers(String chatId, List<String> userIds) async {
     try {

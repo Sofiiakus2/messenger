@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:messanger/repositories/auth_repository.dart';
-import 'package:messanger/repositories/user_repository.dart';
 import 'package:messanger/theme.dart';
 
 import '../repositories/auth_local_storage.dart';

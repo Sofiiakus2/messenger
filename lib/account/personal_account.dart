@@ -12,7 +12,7 @@ class PersonalAccount extends StatefulWidget {
 }
 
 class _PersonalAccountState extends State<PersonalAccount> {
-  bool _showActions = false;
+  final bool _showActions = false;
 
   @override
   Widget build(BuildContext context) {

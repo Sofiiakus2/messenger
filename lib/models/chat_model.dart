@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:messanger/models/message_model.dart';
 
 class ChatModel{
@@ -8,6 +7,8 @@ class ChatModel{
   String? lastMessage;
   DateTime? lastMessageTime;
   bool? lastMessageSender;
+  String? name;
+  bool? isGroup;
 
   ChatModel({
     required this.id,
@@ -16,6 +17,8 @@ class ChatModel{
     this.lastMessage,
     this.lastMessageTime,
     this.lastMessageSender,
+    this.name,
+    this.isGroup
 });
 
 

@@ -8,7 +8,9 @@ class MessagesRepository{
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> sendMessage(String chatId, MessageModel newMessage) async {
+    print('------------------');
     try {
+      print(newMessage.text);
       final messageRef = firestore.collection('chats').doc(chatId).collection('messages');
       await messageRef.add(newMessage.toMap());
 

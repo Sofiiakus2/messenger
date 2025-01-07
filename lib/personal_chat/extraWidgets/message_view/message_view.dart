@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:messanger/personal_chat/extraWidgets/message_view/message_view_by_types/file_message_view.dart';
 import 'package:messanger/personal_chat/extraWidgets/message_view/message_view_by_types/photo_message_view.dart';
-import 'package:messanger/personal_chat/extraWidgets/message_view/message_view_by_types/reply_message_view.dart';
 import 'package:messanger/personal_chat/extraWidgets/message_view/message_view_by_types/text_message_view.dart';
 
 import '../../../models/message_model.dart';
