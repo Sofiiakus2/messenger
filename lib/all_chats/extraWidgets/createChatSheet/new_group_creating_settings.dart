@@ -71,7 +71,7 @@ class _NewGroupCreatingSettingsState extends State<NewGroupCreatingSettings> {
                               .map((id) => id!)
                               .toList();
                           ChatRepository().createGroupChat(userIds, FirebaseAuth.instance.currentUser!.uid, groupNameController.text);
-                          widget.onClose;
+                          widget.onClose();
                         }
                       },
                       child: Text(

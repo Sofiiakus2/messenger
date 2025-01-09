@@ -228,7 +228,9 @@ class _NewGroupWidgetState extends State<NewGroupWidget> {
           onClose:  () {
             setState(() {
               showCreatingSettings = false;
-              widget.onBackPressed;
+              print('11111111111111');
+              widget.onBackPressed();
+              print('22222222222222');
             });
           },
         )

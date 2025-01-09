@@ -22,24 +22,30 @@ class ChatRepository{
   }
 
   Future<ChatModel?> findChat(String userId, String currentUserId) async {
-    final querySnapshot = await firestore
-        .collection('chats')
-        .where('companionsIds', arrayContains: currentUserId)
-        .get();
+    try {
+      final querySnapshot = await firestore
+          .collection('chats')
+          .where('companionsIds', arrayContains: currentUserId)
+          .get();
 
-    for (var doc in querySnapshot.docs) {
-      ChatModel chat = ChatModel(
-        id: doc.id,
-        companionsIds: List<String>.from(doc.data()['companionsIds']),
-      );
+      for (var doc in querySnapshot.docs) {
+        ChatModel chat = ChatModel(
+          id: doc.id,
+          companionsIds: List<String>.from(doc.data()['companionsIds']),
+        );
 
-      if (chat.companionsIds.contains(userId)) {
-        return chat;
+        if (chat.companionsIds.length == 2 && chat.companionsIds.contains(userId)) {
+          return chat;
+        }
       }
-    }
 
-    return null;
+      return null; // Повертаємо null, якщо відповідного чату не знайдено
+    } catch (e) {
+      print('Error finding chat: $e');
+      return null;
+    }
   }
+
 
 
   Future<ChatModel> createChat(String userId, String currentUserId) async {
@@ -74,8 +80,17 @@ class ChatRepository{
 
     final docRef = await firestore.collection('chats').add({
       'companionsIds': newChat.companionsIds,
+      'isGroup' : newChat.isGroup,
+      'name':newChat.name
     });
-    MessageModel newMessage = MessageModel(senderId: currentUserId, text: 'Вас додали до чату', time: DateTime.now() , status: false, isEdited: false);
+    MessageModel newMessage = MessageModel(
+        senderId: currentUserId,
+        text: 'Вас додали до чату',
+        time: DateTime.now() ,
+        status: false,
+        isEdited: false,
+        messageType: MessageType.noti
+    );
     newChat.id = docRef.id;
 
     await addChatIdToUsers(newChat.id, newChat.companionsIds);
@@ -135,6 +150,8 @@ class ChatRepository{
           id: docSnapshot.id,
           companionsIds: List<String>.from(data['companionsIds']),
           messages: [],
+          isGroup: data['isGroup'] ?? false,
+          name: data['name'] ?? '',
           lastMessage: lastMessage!.text ?? '',
           lastMessageTime: lastMessage.time,
           lastMessageSender: lastMessage.senderId == currentUser!.uid
@@ -180,6 +197,8 @@ class ChatRepository{
         id: chatId,
         companionsIds: companionsIds,
         messages: messages,
+        isGroup: chatData['isGroup'] ?? false,
+        name:  chatData['name'] ?? '',
         lastMessage: lastMessage,
         lastMessageTime: lastMessageTime,
         lastMessageSender: messages.isNotEmpty

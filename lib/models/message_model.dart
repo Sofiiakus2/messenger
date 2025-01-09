@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:intl/intl.dart';
 
-enum MessageType { text, file, photo, video, archive, document }
+enum MessageType { text, file, photo, video, archive, document, noti }
 
 class MessageModel{
   String? id;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:messanger/all_chats/extraWidgets/createChatSheet/users_list_view.dart';
 
 import '../../../controllers/chat_controller.dart';
 import '../../../models/chat_model.dart';
@@ -61,7 +62,9 @@ class _CreateChatSheetState extends State<CreateChatSheet> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
                         child: Text(
                           'Скасувати',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -135,49 +138,7 @@ class _CreateChatSheetState extends State<CreateChatSheet> {
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(color: thirdColor),
                   ),
                 ),
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(top: 10),
-                    padding: EdgeInsets.only(top: 5),
-                    width: screenSize.width,
-                    color: thirdColor.withOpacity(0.4),
-                    child: ListView.builder(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      itemCount: users.length,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () async {
-                                ChatModel chat = await ChatRepository().getOrCreateChat(users[index].id!);
-                                Get.toNamed('/chat', arguments: {'chatId': chat.id})?.then((_) {
-                                  Get.find<ChatController>().fetchUserChats();
-                                });
-                              },
-                              child: Container(
-                                height: 60,
-                                margin: EdgeInsets.only(left: 5),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 26,
-                                      backgroundColor: Colors.white,
-                                      child: Icon(Icons.person_outline_rounded, color: thirdColor, size: 28),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(users[index].name, style: Theme.of(context).textTheme.labelSmall)
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Divider(color: Colors.white),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                )
+                Expanded(child: UsersListView(users: users))
               ],
             ),
           ),
@@ -200,6 +161,7 @@ class _CreateChatSheetState extends State<CreateChatSheet> {
           onBackPressed: () {
             setState(() {
               showNewGroup = false;
+              Navigator.pop(context);
             });
           },
         ),
@@ -207,4 +169,5 @@ class _CreateChatSheetState extends State<CreateChatSheet> {
     );
   }
 }
+
 

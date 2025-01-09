@@ -3,11 +3,14 @@ import 'package:get/get.dart';
 
 import '../../theme.dart';
 
-
-
 class CustomAppBar extends StatelessWidget {
+  final bool showActions;
+  final Function(bool) onShowActionsChanged;
+
   const CustomAppBar({
     super.key,
+    required this.showActions,
+    required this.onShowActionsChanged,
   });
 
   @override
@@ -17,16 +20,20 @@ class CustomAppBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-              onPressed: () {
-                Get.back();
-              },
-              icon: const Icon(Icons.arrow_back_rounded, color: fourthColor, size: 30,)),
+            onPressed: () {
+              Get.back();
+            },
+            icon: const Icon(Icons.arrow_back_rounded, color: fourthColor, size: 30),
+          ),
           IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.more_vert, color: fourthColor, size: 30,)),
+            onPressed: () {
+              onShowActionsChanged(!showActions);
+              print(showActions);
+            },
+            icon: const Icon(Icons.more_vert, color: fourthColor, size: 30),
+          ),
         ],
       ),
     );
   }
 }
-

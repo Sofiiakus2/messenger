@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:messanger/personal_chat/extraWidgets/message_view/message_view_by_types/file_message_view.dart';
+import 'package:messanger/personal_chat/extraWidgets/message_view/message_view_by_types/noti_message_view.dart';
 import 'package:messanger/personal_chat/extraWidgets/message_view/message_view_by_types/photo_message_view.dart';
 import 'package:messanger/personal_chat/extraWidgets/message_view/message_view_by_types/text_message_view.dart';
 
@@ -97,6 +98,7 @@ class MessageView extends StatelessWidget {
               MessageType.video => const PhotoMessageView(),
               MessageType.archive => FileMessageView(file: messages[index],),
               MessageType.document => FileMessageView(file: messages[index],),
+              MessageType.noti => NotiMessageView(noti: messages[index],),
             }
           ),
           if (isSenderMe)

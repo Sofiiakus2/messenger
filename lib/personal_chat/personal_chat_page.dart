@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:messanger/models/message_model.dart';
+import 'package:messanger/personal_chat/extraWidgets/chat_details/chat_bar.dart';
 import 'package:messanger/personal_chat/extraWidgets/message_view/forward_bottom_drawer.dart';
 import 'package:messanger/repositories/auth_local_storage.dart';
 import 'package:messanger/repositories/messages_repository.dart';
@@ -93,12 +94,17 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   }
 
 
-  void _onLongPress(int index, LongPressStartDetails details) {
+  void _onLongPress(int index, LongPressStartDetails details,) {
     setState(() {
-      _showActions = true;
       _selectedMessageIndex = index;
-      _tapPosition = details.globalPosition;
     });
+
+    if(messages[_selectedMessageIndex].messageType != MessageType.noti){
+      setState(() {
+        _showActions = true;
+        _tapPosition = details.globalPosition;
+      });
+    }
   }
 
   void deleteMessage(String messageId) async {
@@ -273,7 +279,10 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
             onTap: _hideMessageActions,
             child: const SizedBox(width: double.infinity, height: double.infinity),
           ),
-          const CustomAppBar(),
+          CustomAppBar(
+            showActions: false,
+            onShowActionsChanged: (bool ) {  },
+          ),
           Positioned(
             bottom: 0,
             child: GestureDetector(
@@ -301,17 +310,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
                     : Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: Text(
-                        companion!.name,
-                        style: Theme.of(context).textTheme.labelMedium,
-                      ),
-                    ),
-                    Text(
-                      'Online',
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
+                    ChatBar(chat: chat, userName: companion!.name,),
                     const SizedBox(height: 30),
                     Expanded(
                       child: MessageList(
@@ -334,9 +333,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
                               ? forwardMessage
                               : null,
                       onMessageSent: (text) {
-                        // if (text.startsWith("FILE:")){
-                        //   addFileMessage(text);
-                        // }else
+
                         if (isEdit) {
                           _saveEditedMessage(messages[_selectedMessageIndex].id!, text);
                         } else if(isReply){

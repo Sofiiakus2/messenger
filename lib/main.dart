@@ -4,6 +4,7 @@ import 'package:messanger/account/personal_account.dart';
 import 'package:messanger/all_chats/chatsPage.dart';
 import 'package:messanger/enter/login_page.dart';
 import 'package:messanger/enter/sign_up_page.dart';
+import 'package:messanger/personal_chat/extraWidgets/chat_details/chat_details_view.dart';
 import 'package:messanger/personal_chat/personal_chat_page.dart';
 import 'package:messanger/splash_screen.dart';
 import 'package:messanger/theme.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/chat', page: () => const PersonalChatPage()),
         GetPage(name: '/account', page: () => const PersonalAccount()),
         GetPage(name: '/splashScreen', page: () => const SplashScreen()),
+        GetPage(name: '/chatDetails', page: ()=> const ChatDetailsView()),
       ],
     );
   }

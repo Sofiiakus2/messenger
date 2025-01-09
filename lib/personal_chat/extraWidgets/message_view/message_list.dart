@@ -21,6 +21,7 @@ class MessageList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return ListView.builder(
       reverse: true,
       controller: scrollController,

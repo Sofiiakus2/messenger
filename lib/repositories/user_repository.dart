@@ -38,6 +38,27 @@ class UserRepository{
     }
   }
 
+  Future<List<UserModel>> getUsersByIds(List<String> userIds) async {
+    try {
+      if (userIds.isEmpty) {
+        return [];
+      }
+
+      final querySnapshot = await firestore
+          .collection('users')
+          .where(FieldPath.documentId, whereIn: userIds)
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => UserModel.fromMap(doc.data(), doc.id))
+          .toList();
+    } catch (e) {
+      print('Error fetching users by IDs: $e');
+      return [];
+    }
+  }
+
+
   Future<UserModel?> getUser(String userId) async {
     try {
       final companionSnapshot = await FirebaseFirestore.instance

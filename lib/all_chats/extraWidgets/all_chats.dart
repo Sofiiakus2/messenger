@@ -42,7 +42,6 @@ class AllChats extends StatelessWidget {
             itemBuilder: (context, index) {
               final chat = chats[index];
               final companion = companions[chat.id];
-
               return GestureDetector(
                 onTap: () {
                   Get.toNamed('/chat', arguments: {'chatId': chat.id})?.then((_) {
@@ -59,13 +58,21 @@ class AllChats extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              companion?.name ?? 'Loading...',
-                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                  fontWeight: FontWeight.w900, color: Colors.black),
-                              textAlign: TextAlign.center,
-                              softWrap: true,
-                            ),
+                             chat.isGroup!=null && chat.isGroup == true
+                                 ? Text(
+                               chat.name ?? 'Loading...',
+                               style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                   fontWeight: FontWeight.w900, color: Colors.black),
+                               textAlign: TextAlign.center,
+                               softWrap: true,
+                             )
+                                 : Text(
+                               companion?.name ?? 'Loading...',
+                               style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                   fontWeight: FontWeight.w900, color: Colors.black),
+                               textAlign: TextAlign.center,
+                               softWrap: true,
+                             ),
                             Text(
                               chat.lastMessage ?? '',
                               style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.black),
