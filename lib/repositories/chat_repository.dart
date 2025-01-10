@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/chat_model.dart';
 import '../models/message_model.dart';
+import '../models/user_model.dart';
 import 'messages_repository.dart';
 
 class ChatRepository{
@@ -47,6 +48,40 @@ class ChatRepository{
   }
 
 
+  Future<void> updateEditProfileData({
+    required String chatId,
+    required bool editProfileData,
+  }) async {
+    try {
+      final chatCollection = FirebaseFirestore.instance.collection('chats');
+
+      await chatCollection.doc(chatId).update({
+        'editProfileData': editProfileData,
+      });
+
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateAddNewMember({
+    required String chatId,
+    required bool addNewMember,
+  }) async {
+    try {
+      final chatCollection = FirebaseFirestore.instance.collection('chats');
+
+      await chatCollection.doc(chatId).update({
+        'addNewMember': addNewMember,
+      });
+
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+
+
 
   Future<ChatModel> createChat(String userId, String currentUserId) async {
     ChatModel newChat = ChatModel(
@@ -80,8 +115,11 @@ class ChatRepository{
 
     final docRef = await firestore.collection('chats').add({
       'companionsIds': newChat.companionsIds,
+      'owner': currentUserId,
       'isGroup' : newChat.isGroup,
-      'name':newChat.name
+      'name':newChat.name,
+      'editProfileData': false,
+      'addNewMember': false,
     });
     MessageModel newMessage = MessageModel(
         senderId: currentUserId,
@@ -98,6 +136,35 @@ class ChatRepository{
 
     return newChat;
   }
+
+  Future<void> addUsersToExistingChat(String chatId, Map<UserModel, bool> selectedUsers) async {
+    try {
+      final docRef = firestore.collection('chats').doc(chatId);
+      final docSnapshot = await docRef.get();
+
+      if (docSnapshot.exists) {
+        List<dynamic> existingCompanions = docSnapshot.data()?['companionsIds'] ?? [];
+
+        List<String?> newUserIds = selectedUsers.entries
+            .where((entry) => entry.value == true)
+            .map((entry) => entry.key.id)
+            .where((id) => !existingCompanions.contains(id))
+            .toList();
+
+        List<String?> updatedCompanions = [
+          ...existingCompanions.cast<String>(),
+          ...newUserIds,
+        ];
+
+        await docRef.update({'companionsIds': updatedCompanions});
+      } else {
+        throw Exception("Чат із ID $chatId не знайдено.");
+      }
+    } catch (e) {
+      throw Exception("Не вдалося оновити список companionsIds.");
+    }
+  }
+
 
 
   Future<void> addChatIdToUsers(String chatId, List<String> userIds) async {
@@ -199,6 +266,9 @@ class ChatRepository{
         messages: messages,
         isGroup: chatData['isGroup'] ?? false,
         name:  chatData['name'] ?? '',
+        owner: chatData['owner'] ?? '',
+        editProfileData: chatData['editProfileData'] ?? false,
+        addNewMember: chatData['addNewMember'] ?? false,
         lastMessage: lastMessage,
         lastMessageTime: lastMessageTime,
         lastMessageSender: messages.isNotEmpty

@@ -4,6 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:googleapis/playcustomapp/v1.dart';
 import 'package:messanger/all_chats/extraWidgets/createChatSheet/users_list_view.dart';
 import 'package:messanger/personal_chat/extraWidgets/custom_app_bar.dart';
+import 'package:messanger/repositories/auth_local_storage.dart';
 import 'package:messanger/repositories/user_repository.dart';
 import 'package:messanger/theme.dart';
 
@@ -11,6 +12,7 @@ import '../../../models/chat_model.dart';
 import '../../../models/user_model.dart';
 import '../../../repositories/chat_repository.dart';
 import 'chat_settings/group_chat_settings.dart';
+import 'extraWidgets/add_new_member_button.dart';
 
 class ChatDetailsView extends StatefulWidget {
   const ChatDetailsView({super.key});
@@ -23,6 +25,7 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
  ChatModel? chat;
  UserModel? companion;
  List<UserModel> usersGroupList = [];
+ String? currentUserId ;
 
   @override
   void initState() {
@@ -42,6 +45,8 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
       if (chat!.companionsIds != null) {
         usersGroupList = await UserRepository().getUsersByIds(chat!.companionsIds!);
       }
+
+      currentUserId = await AuthLocalStorage().getUserId();
 
       setState(() {
 
@@ -105,11 +110,21 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
                       Expanded(
                         child: TabBarView(
                           children: [
-                            //Center(child: Text('Учасники')),
                             SizedBox(
                               height: double.infinity,
                               width: double.infinity,
-                              child: UsersListView(users: usersGroupList),
+                              child: Column(
+                                children: [
+                                  if(chat!.owner == currentUserId || chat!.addNewMember == true)
+                                    AddNewMemberButton(
+                                      chatId: chat!.id,
+                                      resetUsers: (){
+
+                                    }
+                                    ),
+                                  Expanded(child: UsersListView(users: usersGroupList)),
+                                ],
+                              ),
                             ),
                             //UsersListView(users: usersGroupList),
                             Center(child: Text('Медіа')),
@@ -145,17 +160,23 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _showActions = false;
-                            });
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              builder: (BuildContext context) {
-                                return GroupChatSettings();
-                              },
-                            );
+                          onTap: () async {
+                            String? currentUserId = await AuthLocalStorage().getUserId();
+                            if(chat!.owner == currentUserId || chat!.editProfileData == true){
+                              setState(() {
+                                _showActions = false;
+                              });
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (BuildContext context) {
+                                  return GroupChatSettings(
+                                    chat: chat!,
+                                  );
+                                },
+                              );
+                            }
+
                           },
                           child: Row(
                             children: [
@@ -176,3 +197,4 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
     );
   }
 }
+

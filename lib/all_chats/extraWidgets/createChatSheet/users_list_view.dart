@@ -42,7 +42,6 @@ class _UsersListViewState extends State<UsersListView> {
     final screenSize = MediaQuery.of(context).size;
     return Container(
       margin: EdgeInsets.only(top: 10),
-      padding: EdgeInsets.only(top: 5),
       width: screenSize.width,
       color: thirdColor.withOpacity(0.4),
       child: ListView.builder(

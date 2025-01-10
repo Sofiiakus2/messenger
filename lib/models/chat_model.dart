@@ -9,6 +9,9 @@ class ChatModel{
   bool? lastMessageSender;
   String? name;
   bool? isGroup;
+  String? owner;
+  bool? editProfileData;
+  bool? addNewMember;
 
   ChatModel({
     required this.id,
@@ -18,7 +21,10 @@ class ChatModel{
     this.lastMessageTime,
     this.lastMessageSender,
     this.name,
-    this.isGroup
+    this.isGroup,
+    this.owner,
+    this.editProfileData,
+    this.addNewMember
 });
 
 

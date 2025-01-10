@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../models/chat_model.dart';
 import '../../theme.dart';
 
 class CustomAppBar extends StatelessWidget {
   final bool showActions;
   final Function(bool) onShowActionsChanged;
+
 
   const CustomAppBar({
     super.key,
@@ -28,7 +30,6 @@ class CustomAppBar extends StatelessWidget {
           IconButton(
             onPressed: () {
               onShowActionsChanged(!showActions);
-              print(showActions);
             },
             icon: const Icon(Icons.more_vert, color: fourthColor, size: 30),
           ),

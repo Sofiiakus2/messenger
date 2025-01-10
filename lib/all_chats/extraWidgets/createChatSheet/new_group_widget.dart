@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:messanger/all_chats/extraWidgets/createChatSheet/new_group_creating_settings.dart';
+import 'package:messanger/all_chats/extraWidgets/createChatSheet/selectedUsersWrap/selected_users_block.dart';
+import 'package:messanger/all_chats/extraWidgets/createChatSheet/selectedUsersWrap/selected_users_wrap.dart';
+import 'package:messanger/all_chats/extraWidgets/createChatSheet/user_selection_list.dart';
 
 import '../../../models/user_model.dart';
 import '../../../theme.dart';
@@ -8,7 +11,6 @@ class NewGroupWidget extends StatefulWidget {
   final bool showNewGroup;
   final Size screenSize;
   final Map<UserModel, bool> selectedUsers;
-  final List<UserModel> users;
   final Function(UserModel) onUserTap;
   final Function onBackPressed;
 
@@ -16,7 +18,6 @@ class NewGroupWidget extends StatefulWidget {
     required this.showNewGroup,
     required this.screenSize,
     required this.selectedUsers,
-    required this.users,
     required this.onUserTap,
     required this.onBackPressed,
   });
@@ -43,8 +44,8 @@ class _NewGroupWidgetState extends State<NewGroupWidget> {
           top: 0,
           bottom: 0,
           child: Container(
-            width: widget.screenSize.width,
-            height: widget.screenSize.height - 100,
+            width: screenSize.width,
+            height: screenSize.height - 100,
             decoration: BoxDecoration(
               color: primaryColor,
               borderRadius: BorderRadius.only(
@@ -113,106 +114,20 @@ class _NewGroupWidgetState extends State<NewGroupWidget> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  padding: EdgeInsets.only(top: 5, left: 10, bottom: 5),
-                  width: widget.screenSize.width,
-                 // height: 50,
-                  color: thirdColor.withOpacity(0.4),
-                  child: widget.selectedUsers.isEmpty
-                      ? Text('Ви ще нікого не обрали', style: Theme.of(context).textTheme.labelSmall,)
-                      : Wrap(
-                    children: widget.selectedUsers.entries.map((entry) {
-                      //final userId = entry.key;
-                      final user = entry.key;
-
-                      return Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        margin: EdgeInsets.only(left: 2, bottom: 5, right: 2),
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CircleAvatar(
-                              radius: 15,
-                              backgroundColor: secondaryColor,
-                            ),
-                            SizedBox(width: 8),
-                            Text(
-                              user.name,  // Replace with the actual user name
-                              style: TextStyle(color: Colors.white, fontSize: 14),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
+                SelectedUsersBlock(selectedUsers: widget.selectedUsers),
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.only(top: 10),
                     padding: EdgeInsets.only(top: 5),
-                    width: widget.screenSize.width,
+                    width: screenSize.width,
                     color: thirdColor.withOpacity(0.4),
-                    child: ListView.builder(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      itemCount: widget.users.length,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () async {
-
-                              },
-                              child: Container(
-                                height: 60,
-                                margin: EdgeInsets.only(left: 10),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        widget.onUserTap(widget.users[index]);
-                                      },
-                                      child: Container(
-                                        height: 24,
-                                        width: 24,
-                                        decoration: BoxDecoration(
-                                          color: widget.selectedUsers[widget.users[index]] ?? false ? thirdColor : Colors.transparent,
-                                          border: Border.all(color: Colors.white, width: 2),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: widget.selectedUsers[widget.users[index]] ?? false
-                                            ? Icon(
-                                          Icons.check,
-                                          size: 16,
-                                          color: Colors.white,
-                                        )
-                                            : null,
-                                      ),
-                                    ),
-                                    SizedBox(width: 15,),
-                                    CircleAvatar(
-                                      radius: 26,
-                                      backgroundColor: Colors.white,
-                                      child: Icon(Icons.person_outline_rounded, color: thirdColor, size: 28),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(widget.users[index].name, style: Theme.of(context).textTheme.labelSmall),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Divider(color: Colors.white),
-                          ],
-                        );
-                      },
+                    child: UserSelectionList(
+                      selectedUsers: widget.selectedUsers,
+                      onUserTap: widget.onUserTap,
                     ),
                   ),
                 ),
+
               ],
             ),
           ),
@@ -228,9 +143,7 @@ class _NewGroupWidgetState extends State<NewGroupWidget> {
           onClose:  () {
             setState(() {
               showCreatingSettings = false;
-              print('11111111111111');
               widget.onBackPressed();
-              print('22222222222222');
             });
           },
         )

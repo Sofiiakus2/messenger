@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:messanger/all_chats/extraWidgets/createChatSheet/users_list_view.dart';
 
-import '../../../controllers/chat_controller.dart';
-import '../../../models/chat_model.dart';
 import '../../../models/user_model.dart';
-import '../../../repositories/chat_repository.dart';
 import '../../../repositories/user_repository.dart';
 import '../../../theme.dart';
 import 'new_group_widget.dart';
@@ -21,7 +16,7 @@ class CreateChatSheet extends StatefulWidget {
 class _CreateChatSheetState extends State<CreateChatSheet> {
   List<UserModel> users = [];
   bool showNewGroup = false;
-  Map<UserModel, bool> selectedUsers = {}; // Store UserModel instead of index
+  Map<UserModel, bool> selectedUsers = {};
 
   void fetchUsers() async {
     final fetchedUsers = await UserRepository().getAllUsers();
@@ -147,7 +142,6 @@ class _CreateChatSheetState extends State<CreateChatSheet> {
           showNewGroup: showNewGroup,
           screenSize: screenSize,
           selectedUsers: selectedUsers,
-          users: users,
           onUserTap: (UserModel user) {
             setState(() {
               if (selectedUsers[user] ?? false) {
