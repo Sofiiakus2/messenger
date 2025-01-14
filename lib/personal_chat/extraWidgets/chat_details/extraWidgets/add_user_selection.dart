@@ -3,12 +3,13 @@ import 'package:messanger/repositories/chat_repository.dart';
 
 import '../../../../all_chats/extraWidgets/createChatSheet/selectedUsersWrap/selected_users_block.dart';
 import '../../../../all_chats/extraWidgets/createChatSheet/user_selection_list.dart';
+import '../../../../models/chat_model.dart';
 import '../../../../models/user_model.dart';
 import '../../../../theme.dart';
 
 class AddUserSelection extends StatefulWidget {
-  const AddUserSelection({super.key, required this.chatId});
-  final String chatId;
+  const AddUserSelection({super.key, required this.chat});
+  final ChatModel chat;
 
   @override
   State<AddUserSelection> createState() => _AddUserSelectionState();
@@ -50,7 +51,19 @@ class _AddUserSelectionState extends State<AddUserSelection> {
                 ),
                 TextButton(
                   onPressed: () {
-                    ChatRepository().addUsersToExistingChat(widget.chatId, selectedUsers);
+                    List<String> newUserIds = selectedUsers.entries
+                        .where((entry) => entry.value)
+                        .map((entry) => entry.key.id)
+                        .whereType<String>()
+                        .where((id) => !widget.chat.companionsIds.contains(id))
+                        .toList();
+
+
+                    setState(() {
+                      widget.chat.companionsIds.addAll(newUserIds);
+                    });
+
+                    ChatRepository().addUsersToExistingChat(widget.chat.id, selectedUsers);
                     Navigator.pop(context);
                   },
                   child: Text(

@@ -14,7 +14,7 @@ import '../repositories/chat_repository.dart';
 import 'extraWidgets/custom_app_bar.dart';
 import 'extraWidgets/message_view/message_actions.dart';
 import 'extraWidgets/message_view/message_list.dart';
-import 'extraWidgets/sending_block.dart';
+import 'extraWidgets/sendingBlock/sending_block.dart';
 
 class PersonalChatPage extends StatefulWidget {
   const PersonalChatPage({super.key});
@@ -198,10 +198,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
       messages.insert(0, file);
     });
 
-    //scrollChat();
-
     try {
-      //await MessagesRepository().sendMessage(chat!.id, newMessage);
     } catch (e) {
       rethrow;
     }

@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:messanger/personal_chat/extraWidgets/file_attachment_button.dart';
 
-import '../../models/message_model.dart';
-import '../../theme.dart';
+import '../../../models/message_model.dart';
+import '../../../theme.dart';
+import '../file_attachment_button.dart';
+import 'editing_block.dart';
+import 'reply_forward_block.dart';
 
 class SendingBlock extends StatefulWidget {
   const SendingBlock({
     super.key,
-    required this.chatId,
-    required this.isEdit,
-    required this.isReply,
-    this.message,
-    required this.onMessageSent,
-    required this.isForward,
-    required this.onFileSent,
+    required this.chatId, required this.isEdit, required this.isReply, this.message, required this.onMessageSent, required this.isForward, required this.onFileSent,
   });
 
   final String chatId;
@@ -58,7 +54,6 @@ class _SendingBlockState extends State<SendingBlock> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -86,85 +81,14 @@ class _SendingBlockState extends State<SendingBlock> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if(widget.isEdit)
-       Row(
-         children: [
-           Container(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                margin: const EdgeInsets.only(left: 20),
-                decoration: const BoxDecoration(
-                  color: thirdColor,
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                ),
-                child: Text(
-                  'Редагування',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelSmall
-                      ?.copyWith(color: Colors.white),
-                ),
-              ),
-           GestureDetector(
-             onTap: cancelEditMessage,
-             child: Container(
-               padding: const EdgeInsets.all(4),
-               margin: const EdgeInsets.only(left: 5),
-               decoration: const BoxDecoration(
-                 color: Colors.white,
-                 borderRadius: BorderRadius.all(Radius.circular(30)),
-               ),
-               child: const Icon(Icons.close, size: 20, color: thirdColor,)
-             ),
-           ),
-         ],
-       ),
-
-        if(widget.isReply || widget.isForward)
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              const Icon(Icons.reply_sharp, color: thirdColor, size: 30,),
-              Container(
-                constraints: const BoxConstraints(
-                  minWidth: 60,
-                  maxWidth: 310,
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                decoration: BoxDecoration(
-                  color:  thirdColor.withOpacity(0.3),
-                  border: const Border(
-                    left: BorderSide(
-                      color: thirdColor,
-                      width: 3,
-                    ),
-                  ),
-                  borderRadius: const BorderRadius.only(
-                      topRight:  Radius.circular(20),
-                      bottomRight: Radius.circular(20)
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.isForward
-                      ? 'Переслане повідомлення'
-                          :'Відповісти:',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(color: thirdColor),),
-                    Text(widget.message!.text, style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w800),),
-
-                  ],
-                ),
-              ),
-              const Expanded(child: SizedBox()),
-              IconButton(
-                  onPressed: (){
-                    cancelEditMessage();
-                  },
-                  icon:const  Icon(Icons.close, color: thirdColor, size: 30,)
-              ),
-              const SizedBox(width: 20,),
-            ],
+        if (widget.isEdit)
+          EditingBlock(cancelEditMessage: cancelEditMessage),
+        if (widget.isReply || widget.isForward)
+          ReplyForwardBlock(
+            isReply: widget.isReply,
+            isForward: widget.isForward,
+            message: widget.message,
+            cancelEditMessage: cancelEditMessage,
           ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -193,25 +117,17 @@ class _SendingBlockState extends State<SendingBlock> {
                         });
                       },
                       maxLines: null,
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelSmall
-                          ?.copyWith(color: Colors.black),
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.black),
                       decoration: InputDecoration(
                         hintText: "Aa",
-                        hintStyle: Theme.of(context)
-                            .textTheme
-                            .titleSmall
-                            ?.copyWith(color: Colors.black),
+                        hintStyle: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.black),
                         border: InputBorder.none,
                       ),
                       cursorColor: thirdColor,
                       scrollPhysics: const BouncingScrollPhysics(),
                     ),
                   ),
-                 FileAttachmentButton(onFileSelected: (file){
-                  sendFileMessage(file);
-                 })
+                  FileAttachmentButton(onFileSelected: sendFileMessage),
                 ],
               ),
             ),

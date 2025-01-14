@@ -40,7 +40,7 @@ class ChatRepository{
         }
       }
 
-      return null; // Повертаємо null, якщо відповідного чату не знайдено
+      return null;
     } catch (e) {
       print('Error finding chat: $e');
       return null;
@@ -156,7 +156,17 @@ class ChatRepository{
           ...newUserIds,
         ];
 
+        MessageModel newMessage = MessageModel(
+            senderId: FirebaseAuth.instance.currentUser!.uid,
+            text: 'До чату було додано нових користувачів',
+            time: DateTime.now() ,
+            status: false,
+            isEdited: false,
+            messageType: MessageType.noti
+        );
+
         await docRef.update({'companionsIds': updatedCompanions});
+        await MessagesRepository().sendMessage(chatId, newMessage);
       } else {
         throw Exception("Чат із ID $chatId не знайдено.");
       }

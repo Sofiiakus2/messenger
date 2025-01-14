@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:messanger/personal_chat/extraWidgets/chat_details/extraWidgets/add_user_selection.dart';
 
+import '../../../../models/chat_model.dart';
 import '../../../../theme.dart';
 
 class AddNewMemberButton extends StatelessWidget {
   const AddNewMemberButton({
-    super.key, required this.chatId, required this.resetUsers,
+    super.key, required this.chat, required this.resetUsers,
   });
 
-  final String chatId;
-  final Function resetUsers;
+  final ChatModel chat;
+  final VoidCallback  resetUsers;
 
 
   @override
@@ -22,7 +23,7 @@ class AddNewMemberButton extends StatelessWidget {
           isScrollControlled: true,
           builder: (BuildContext context) {
             return AddUserSelection(
-              chatId: chatId,
+              chat: chat,
             );
           },
         ).then((value){

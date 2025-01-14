@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:googleapis/playcustomapp/v1.dart';
 import 'package:messanger/all_chats/extraWidgets/createChatSheet/users_list_view.dart';
 import 'package:messanger/personal_chat/extraWidgets/custom_app_bar.dart';
 import 'package:messanger/repositories/auth_local_storage.dart';
@@ -10,9 +9,8 @@ import 'package:messanger/theme.dart';
 
 import '../../../models/chat_model.dart';
 import '../../../models/user_model.dart';
-import '../../../repositories/chat_repository.dart';
-import 'chat_settings/group_chat_settings.dart';
 import 'extraWidgets/add_new_member_button.dart';
+import 'extraWidgets/chat_settings_actions/chat_details_actions_view.dart';
 
 class ChatDetailsView extends StatefulWidget {
   const ChatDetailsView({super.key});
@@ -41,16 +39,12 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
       if (chat!.isGroup == false) {
         companion = await UserModel.getChatCompanion(chat!);
       }
-
       if (chat!.companionsIds != null) {
         usersGroupList = await UserRepository().getUsersByIds(chat!.companionsIds!);
       }
 
       currentUserId = await AuthLocalStorage().getUserId();
-
-      setState(() {
-
-      });
+      setState(() {});
 
     } catch (e) {
       print('Error loading data: $e');
@@ -61,8 +55,6 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-
     return Scaffold(
       backgroundColor: primaryColor,
       body: Stack(
@@ -117,16 +109,15 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
                                 children: [
                                   if(chat!.owner == currentUserId || chat!.addNewMember == true)
                                     AddNewMemberButton(
-                                      chatId: chat!.id,
-                                      resetUsers: (){
-
-                                    }
+                                      chat: chat!,
+                                      resetUsers: () async {
+                                        await _loadData();
+                                      },
                                     ),
-                                  Expanded(child: UsersListView(users: usersGroupList)),
+                                  Expanded(child: UsersListView(users: usersGroupList, enableDeleting: true, chatId: chat!.id,)),
                                 ],
                               ),
                             ),
-                            //UsersListView(users: usersGroupList),
                             Center(child: Text('Медіа')),
                             Center(child: Text('Файли')),
                           ],
@@ -138,60 +129,15 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
               ),
             ],
           ),
-          if (_showActions)
-            Positioned(
-                top: 90,
-                right: 40,
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _showActions = false;
-                    });
-                  },
-                  child: Container(
-                    width: 200,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: thirdColor.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            String? currentUserId = await AuthLocalStorage().getUserId();
-                            if(chat!.owner == currentUserId || chat!.editProfileData == true){
-                              setState(() {
-                                _showActions = false;
-                              });
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                builder: (BuildContext context) {
-                                  return GroupChatSettings(
-                                    chat: chat!,
-                                  );
-                                },
-                              );
-                            }
-
-                          },
-                          child: Row(
-                            children: [
-                              const Icon(Icons.edit, color: Colors.white, size: 24,),
-                              const SizedBox(width: 10),
-                              Text("Налаштування", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white)),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                    ),
-                  ),
-                )
-            )
+          ChatActions(
+            chat: chat!,
+            showActions: _showActions,
+            onShowActionsChanged: (bool value) {
+              setState(() {
+                _showActions = value;
+              });
+            },
+          ),
         ],
       ),
     );

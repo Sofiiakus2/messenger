@@ -8,14 +8,19 @@ import '../../../models/chat_model.dart';
 import '../../../models/user_model.dart';
 import '../../../repositories/chat_repository.dart';
 import '../../../theme.dart';
+import 'confirmation_dialog.dart';
 
 class UsersListView extends StatefulWidget {
   const UsersListView({
     super.key,
     required this.users,
+    required this.enableDeleting,
+    this.chatId,
   });
 
   final List<UserModel> users;
+  final bool enableDeleting;
+  final String? chatId;
 
   @override
   State<UsersListView> createState() => _UsersListViewState();
@@ -32,9 +37,7 @@ class _UsersListViewState extends State<UsersListView> {
 
   Future<void> loadData() async{
     currentUserId = await AuthLocalStorage().getUserId();
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -63,7 +66,7 @@ class _UsersListViewState extends State<UsersListView> {
                 },
                 child: Container(
                   height: 60,
-                  margin: EdgeInsets.only(left: 5),
+                  margin: EdgeInsets.only(left: 5, right: 5),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -81,7 +84,28 @@ class _UsersListViewState extends State<UsersListView> {
                             color: widget.users[index].id == currentUserId
                                 ? Colors.black
                                 : Colors.white
-                          ))
+                          )),
+                      Expanded(child: SizedBox(),),
+                      if(widget.enableDeleting)
+                      IconButton(
+                        icon: Icon(Icons.delete_outline, size: 30,
+                          color: thirdColor, ),
+
+                        onPressed: () {
+                          String chatId = widget.chatId ?? "";
+                          String userId = widget.users[index].id!;
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ConfirmationDialog(
+                                name: widget.users[index].name,
+                                chatId: chatId,
+                                userId: userId,
+                              );
+                            },
+                          );
+                          },
+                      )
                     ],
                   ),
                 ),
@@ -94,3 +118,4 @@ class _UsersListViewState extends State<UsersListView> {
     );
   }
 }
+

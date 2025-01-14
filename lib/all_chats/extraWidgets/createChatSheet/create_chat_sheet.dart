@@ -133,7 +133,7 @@ class _CreateChatSheetState extends State<CreateChatSheet> {
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(color: thirdColor),
                   ),
                 ),
-                Expanded(child: UsersListView(users: users))
+                Expanded(child: UsersListView(users: users, enableDeleting: false,))
               ],
             ),
           ),
