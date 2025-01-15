@@ -17,11 +17,9 @@ class ChatDetailsController extends GetxController {
   }
 
   Future<void> resetUsers() async {
-    // Оновлюємо companionsIds (наприклад, після змін у БД)
     if (chat.value != null) {
-      chat.value!.companionsIds = ['newUserId1', 'newUserId2']; // Замініть на реальні дані
-
-      // Оновлюємо usersGroupList
+      chat.value!.companionsIds = ['newUserId1', 'newUserId2'];
+      
       usersGroupList.value =
       await UserRepository().getUsersByIds(chat.value!.companionsIds!);
     }

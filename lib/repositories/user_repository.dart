@@ -22,6 +22,60 @@ class UserRepository{
     });
   }
 
+  Future<bool> isUserGroupOwner(String userId, String chatId) async {
+    try {
+      final docSnapshot = await firestore.collection('chats').doc(chatId).get();
+
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data();
+
+        if (data != null && data['owner'] == userId) {
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      print('Error checking group owner: $e');
+      return false;
+    }
+  }
+
+  Future<void> transferGroupOwnership(String chatId, String currentOwnerId) async {
+    try {
+      final chatDoc = await firestore.collection('chats').doc(chatId).get();
+
+      if (!chatDoc.exists) {
+        throw Exception("Чат не знайдено");
+      }
+
+      final chatData = chatDoc.data()!;
+      List<String> companionsIds = List<String>.from(chatData['companionsIds'] ?? []);
+      String currentOwner = chatData['owner'];
+
+      if (currentOwner != currentOwnerId) {
+        throw Exception("Користувач не є поточним власником чату");
+      }
+
+      // Пошук першого іншого учасника
+      String? newOwnerId = companionsIds.firstWhere(
+            (userId) => userId != currentOwnerId,
+        orElse: () => throw Exception("Немає інших учасників для передачі власності"),
+      );
+
+      // Оновлення власника чату
+      await firestore.collection('chats').doc(chatId).update({
+        'owner': newOwnerId,
+      });
+
+      print("Власність передано користувачу з ID: $newOwnerId");
+    } catch (e) {
+      print("Помилка передачі власності: $e");
+      rethrow;
+    }
+  }
+
+
+
   Future<List<UserModel>> getAllUsers() async {
     try {
       final currentUser = FirebaseAuth.instance.currentUser;

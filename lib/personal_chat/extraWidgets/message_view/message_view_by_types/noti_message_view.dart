@@ -23,7 +23,7 @@ class NotiMessageView extends StatelessWidget {
                 const Radius.circular(30),
               ),
             ),
-            child: Text(noti.text, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.black, fontSize: 18),),
+            child: Text(noti.text, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.black, fontSize: 14),),
           ),
         )
       ],

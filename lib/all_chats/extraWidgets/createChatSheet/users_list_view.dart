@@ -86,7 +86,7 @@ class _UsersListViewState extends State<UsersListView> {
                                 : Colors.white
                           )),
                       Expanded(child: SizedBox(),),
-                      if(widget.enableDeleting)
+                      if(widget.enableDeleting && widget.users[index].id != currentUserId)
                       IconButton(
                         icon: Icon(Icons.delete_outline, size: 30,
                           color: thirdColor, ),
@@ -101,11 +101,33 @@ class _UsersListViewState extends State<UsersListView> {
                                 name: widget.users[index].name,
                                 chatId: chatId,
                                 userId: userId,
+                                isCurrentUser: false,
                               );
                             },
                           );
                           },
-                      )
+                      ),
+                      if(widget.enableDeleting && widget.users[index].id == currentUserId)
+                        IconButton(
+                          icon: Icon(Icons.exit_to_app_outlined, size: 30,
+                            color: secondaryColor, ),
+
+                          onPressed: () {
+                            String chatId = widget.chatId ?? "";
+                            String userId = widget.users[index].id!;
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ConfirmationDialog(
+                                  name: widget.users[index].name,
+                                  chatId: chatId,
+                                  userId: userId,
+                                  isCurrentUser: true,
+                                );
+                              },
+                            );
+                          },
+                        )
                     ],
                   ),
                 ),

@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:messanger/repositories/chat_repository.dart';
 import 'package:messanger/repositories/user_repository.dart';
-import '../../../theme.dart';
 
-class ConfirmationDialog extends StatelessWidget {
-  final String name;
+import '../../../../../theme.dart';
+
+
+class DeletingConfirmationDialog extends StatelessWidget {
+
   final String chatId;
-  final String userId;
-  final bool isCurrentUser;
 
-  const ConfirmationDialog({
+  const DeletingConfirmationDialog({
     Key? key,
-    required this.name,
     required this.chatId,
-    required this.userId,
-    required this.isCurrentUser
   }) : super(key: key);
 
   @override
@@ -21,9 +19,7 @@ class ConfirmationDialog extends StatelessWidget {
     return AlertDialog(
       title: Text("Підтвердження", style: Theme.of(context).textTheme.titleMedium,),
       content: Text(
-        isCurrentUser
-        ?"Ви точно хочете покинути групу?"
-        :"Видалити користувача $name з чату?",
+            "Ви впевнені що хочете видалити чат?",
         style: Theme.of(context).textTheme.titleMedium,),
       backgroundColor: primaryColor,
       actions: [
@@ -35,19 +31,22 @@ class ConfirmationDialog extends StatelessWidget {
         ),
         ElevatedButton(
           onPressed: () async {
-            bool isOwner = await UserRepository().isUserGroupOwner(userId, chatId);
-
-            if(isOwner){
-              await UserRepository().transferGroupOwnership(chatId, userId);
-              await UserRepository().removeUserFromChat(chatId, userId);
-              await UserRepository().removeChatFromUser(chatId, userId);
-              Navigator.of(context).pop();
-            }else{
-              await UserRepository().removeUserFromChat(chatId, userId);
-              await UserRepository().removeChatFromUser(chatId, userId);
-            }
+            await ChatRepository().deleteChat(chatId);
             Navigator.of(context).pop();
             Navigator.of(context).pop();
+            // bool isOwner = await UserRepository().isUserGroupOwner(userId, chatId);
+            //
+            // if(isOwner){
+            //   await UserRepository().transferGroupOwnership(chatId, userId);
+            //   await UserRepository().removeUserFromChat(chatId, userId);
+            //   await UserRepository().removeChatFromUser(chatId, userId);
+            //   Navigator.of(context).pop();
+            // }else{
+            //   await UserRepository().removeUserFromChat(chatId, userId);
+            //   await UserRepository().removeChatFromUser(chatId, userId);
+            // }
+            // Navigator.of(context).pop();
+            // Navigator.of(context).pop();
 
           },
           style: ButtonStyle(

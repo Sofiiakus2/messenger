@@ -42,7 +42,6 @@ class ChatRepository{
 
       return null;
     } catch (e) {
-      print('Error finding chat: $e');
       return null;
     }
   }
@@ -136,6 +135,33 @@ class ChatRepository{
 
     return newChat;
   }
+
+  Future<void> deleteChat(String chatId) async {
+    try {
+      final chatDocRef = firestore.collection('chats').doc(chatId);
+
+      final chatDoc = await chatDocRef.get();
+      if (!chatDoc.exists) {
+        throw Exception("Чат з ID $chatId не знайдено");
+      }
+
+      final messagesQuerySnapshot = await firestore
+          .collection('chats')
+          .doc(chatId)
+          .collection('messages')
+          .get();
+
+      for (final messageDoc in messagesQuerySnapshot.docs) {
+        await messageDoc.reference.delete();
+      }
+
+      await chatDocRef.delete();
+
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 
   Future<void> addUsersToExistingChat(String chatId, Map<UserModel, bool> selectedUsers) async {
     try {

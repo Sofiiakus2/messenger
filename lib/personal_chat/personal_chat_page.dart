@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:messanger/models/message_model.dart';
 import 'package:messanger/personal_chat/extraWidgets/chat_details/chat_bar.dart';
+import 'package:messanger/personal_chat/extraWidgets/chat_details/extraWidgets/chat_settings_actions/chat_settings_action_view.dart';
 import 'package:messanger/personal_chat/extraWidgets/message_view/forward_bottom_drawer.dart';
 import 'package:messanger/repositories/auth_local_storage.dart';
 import 'package:messanger/repositories/messages_repository.dart';
@@ -32,6 +33,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   UserModel? companion;
   String? currentUserId;
   bool _showActions = false;
+  bool _showSettingsActions = false;
   int _selectedMessageIndex = -1;
   Offset? _tapPosition;
   bool isEdit = false;
@@ -278,7 +280,11 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
           ),
           CustomAppBar(
             showActions: false,
-            onShowActionsChanged: (bool ) {  },
+            onShowActionsChanged: (bool ) {
+              setState(() {
+                _showSettingsActions = bool;
+              });
+            },
           ),
           Positioned(
             bottom: 0,
@@ -365,6 +371,17 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
               hideActions: _hideMessageActions,
               forwardAction: () => _toggleForward(messages[_selectedMessageIndex]),
             ),
+
+          if (chat != null)
+          ChatSettingsActions(
+            chat: chat!,
+            showActions: _showSettingsActions,
+            onShowActionsChanged: (bool value) {
+              setState(() {
+                _showSettingsActions = value;
+              });
+            },
+          ),
         ],
       ),
     );

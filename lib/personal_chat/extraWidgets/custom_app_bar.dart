@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../models/chat_model.dart';
 import '../../theme.dart';
 
 class CustomAppBar extends StatelessWidget {
