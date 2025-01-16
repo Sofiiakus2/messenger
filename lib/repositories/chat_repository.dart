@@ -136,6 +136,17 @@ class ChatRepository{
     return docRef.id;
   }
 
+  Future<void> updateChatName(String chatId, String newName) async {
+    try {
+      await firestore.collection('chats').doc(chatId).update({
+        'name': newName,
+      });
+    } catch (e) {
+      print("Error updating chat name: $e");
+    }
+  }
+
+
   Future<void> deleteChat(String chatId) async {
     try {
       final chatDocRef = firestore.collection('chats').doc(chatId);

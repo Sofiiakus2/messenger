@@ -132,6 +132,11 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
           ChatActions(
             chat: chat!,
             showActions: _showActions,
+            onChatNameUpdated:(text){
+              setState(() {
+                chat!.name = text;
+              });
+            },
             onShowActionsChanged: (bool value) {
               setState(() {
                 _showActions = value;

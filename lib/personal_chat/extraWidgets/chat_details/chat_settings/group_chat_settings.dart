@@ -7,8 +7,9 @@ import '../../../../theme.dart';
 
 class GroupChatSettings extends StatefulWidget {
   final ChatModel chat;
+  final Function(String) onChatNameUpdated;
 
-  const GroupChatSettings({super.key, required this.chat});
+  const GroupChatSettings({super.key, required this.chat, required this.onChatNameUpdated,});
 
 
   @override
@@ -64,6 +65,15 @@ class _GroupChatSettingsState extends State<GroupChatSettings> {
             width: screenSize.width/2,
             child: TextField(
               controller: groupNameController,
+              onEditingComplete: (){
+                print('complete ${groupNameController.text}');
+                ChatRepository().updateChatName(widget.chat.id, groupNameController.text);
+
+                setState(() {
+                  widget.chat.name = groupNameController.text;
+                });
+                widget.onChatNameUpdated(groupNameController.text);
+              },
               decoration: InputDecoration(
                 hintText: 'Назва групи',
                 hintStyle: Theme.of(context).textTheme.labelMedium,

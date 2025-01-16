@@ -9,12 +9,14 @@ class ChatActions extends StatelessWidget {
   final ChatModel chat;
   final bool showActions;
   final Function(bool) onShowActionsChanged;
+  final Function(String) onChatNameUpdated;
 
   const ChatActions({
     Key? key,
     required this.chat,
     required this.showActions,
     required this.onShowActionsChanged,
+    required this.onChatNameUpdated,
   }) : super(key: key);
 
   @override
@@ -50,9 +52,13 @@ class ChatActions extends StatelessWidget {
                       builder: (BuildContext context) {
                         return GroupChatSettings(
                           chat: chat,
+                          onChatNameUpdated: onChatNameUpdated,
                         );
                       },
-                    );
+                    ).then((_) {
+                      print('Modal bottom sheet closed');
+
+                    });
                   }
                 },
                 child: Row(
