@@ -3,9 +3,12 @@ import 'package:messanger/models/chat_model.dart';
 import 'package:messanger/models/user_model.dart';
 import 'package:messanger/repositories/chat_repository.dart';
 
+import '../repositories/user_repository.dart';
+
 class ChatController extends GetxController {
   var chats = <ChatModel>[].obs;
   var companions = <String, UserModel>{}.obs;
+  var favouriteUsers = <UserModel>[].obs;
 
   Future<void> fetchUserChats() async {
     final chatIds = await ChatRepository().getChatIdsByUserId().first;
@@ -39,9 +42,21 @@ class ChatController extends GetxController {
 
  }
 
+  Future<void> fetchFavouriteUsers() async {
+    List<String> favUsers = await UserRepository().getFavoriteContacts();
+
+    if (favUsers.isNotEmpty) {
+      favouriteUsers.value = await UserRepository().getUsersByIds(favUsers);
+    } else {
+      favouriteUsers.value = [];
+    }
+  }
+
+
   @override
   void onInit() {
     fetchUserChats();
+    fetchFavouriteUsers();
     super.onInit();
   }
 }

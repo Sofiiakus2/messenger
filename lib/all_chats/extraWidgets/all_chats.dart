@@ -46,6 +46,7 @@ class AllChats extends StatelessWidget {
                 onTap: () {
                   Get.toNamed('/chat', arguments: {'chatId': chat.id})?.then((_) {
                     chatController.fetchUserChats();
+                    chatController.fetchFavouriteUsers();
                   });
                 },
                 child: Container(

@@ -56,20 +56,16 @@ class UserRepository{
         throw Exception("Користувач не є поточним власником чату");
       }
 
-      // Пошук першого іншого учасника
       String? newOwnerId = companionsIds.firstWhere(
             (userId) => userId != currentOwnerId,
         orElse: () => throw Exception("Немає інших учасників для передачі власності"),
       );
 
-      // Оновлення власника чату
       await firestore.collection('chats').doc(chatId).update({
         'owner': newOwnerId,
       });
 
-      print("Власність передано користувачу з ID: $newOwnerId");
     } catch (e) {
-      print("Помилка передачі власності: $e");
       rethrow;
     }
   }
@@ -110,6 +106,27 @@ class UserRepository{
           .toList();
     } catch (e) {
       print('Error fetching users by IDs: $e');
+      return [];
+    }
+  }
+
+  Future<List<String>> getFavoriteContacts() async {
+    try {
+      final currentUser = auth.currentUser;
+      // Отримуємо посилання на колекцію користувачів
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(currentUser!.uid).get();
+
+      // Перевіряємо чи існує користувач
+      if (userSnapshot.exists) {
+        // Отримуємо список улюблених контактів
+        List<dynamic> favoriteContacts = userSnapshot['favoriteContacts'] ?? [];
+        return List<String>.from(favoriteContacts); // Перетворюємо в список String
+      } else {
+        print("User not found");
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching favorite contacts: $e');
       return [];
     }
   }
@@ -183,6 +200,20 @@ class UserRepository{
       rethrow;
     }
   }
+
+  Future<void> addContactToFavorites(String contactId) async {
+    try {
+      final currentUser = auth.currentUser;
+
+      UserModel? user = await UserRepository().getUser(currentUser!.uid);
+
+      await user!.addFavoriteContact(contactId);
+
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 
 
 

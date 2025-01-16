@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:messanger/models/chat_model.dart';
 import 'package:messanger/personal_chat/extraWidgets/chat_details/extraWidgets/chat_settings_actions/deleting_confirmation_dialog.dart';
 import 'package:messanger/repositories/auth_local_storage.dart';
+import 'package:messanger/repositories/user_repository.dart';
 import 'package:messanger/theme.dart';
 
 import '../../chat_settings/group_chat_settings.dart';
@@ -66,6 +67,33 @@ class ChatSettingsActions extends StatelessWidget {
                   ],
                 ),
               ),
+              if(chat.isGroup == false)
+                Column(
+                  children: [
+                    const SizedBox(height: 10),
+                    GestureDetector(
+                      onTap: () async {
+                        UserRepository().addContactToFavorites(chat.companionsIds[0]);
+                        onShowActionsChanged(false);
+                        },
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.favorite,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            "До улюблених",
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               const SizedBox(height: 10),
             ],
           ),

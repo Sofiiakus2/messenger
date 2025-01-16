@@ -12,6 +12,7 @@ class UserModel{
   String email;
   bool? status;
   String? description;
+  List<String>? favoriteContacts;
 
 
   UserModel({
@@ -22,6 +23,7 @@ class UserModel{
     required this.email,
     this.status,
     this.description,
+    this.favoriteContacts
   });
 
   Map<String, dynamic> toMap() {
@@ -32,7 +34,8 @@ class UserModel{
       'token': token,
       'email': email,
       'status': status,
-      'description':description
+      'description': description,
+      'favoriteContacts': favoriteContacts!.isEmpty ? [] : favoriteContacts, // Перевірка на пустий список
     };
   }
 
@@ -45,6 +48,7 @@ class UserModel{
       email: map['email'],
       status: map['status'],
       description: map['description'],
+      favoriteContacts: map['favoriteContacts'] != null ? List<String>.from(map['favoriteContacts']) : [], // Безпечне перетворення на список
     );
   }
 
@@ -60,6 +64,26 @@ class UserModel{
     return await UserRepository().getUser(companionId);
   }
 
+  Future<void> addFavoriteContact(String contactId) async {
 
+    if (favoriteContacts!.length >= 10) {
+      favoriteContacts!.removeAt(0);
+    }
+
+    favoriteContacts!.add(contactId);
+
+    await save();
+  }
+
+  Future<void> save() async {
+    try {
+      CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+      await users.doc(id).set(toMap(), SetOptions(merge: true));
+
+    } catch (e) {
+      rethrow;
+    }
+  }
 
 }

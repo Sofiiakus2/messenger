@@ -61,6 +61,7 @@ class _UsersListViewState extends State<UsersListView> {
                     Get.toNamed('/chat', arguments: {'chatId': chat.id})
                         ?.then((_) {
                       Get.find<ChatController>().fetchUserChats();
+                      Get.find<ChatController>().fetchFavouriteUsers();
                     });
                   }
                 },
