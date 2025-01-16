@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
+import '../controllers/chat_controller.dart';
 import '../models/chat_model.dart';
 import '../models/message_model.dart';
 import '../models/user_model.dart';
@@ -101,39 +104,36 @@ class ChatRepository{
     return newChat;
   }
 
-  Future<ChatModel> createGroupChat(List<String> userIds, String currentUserId, String name) async {
+  Future<ChatModel> createAndGetGroupChat(List<String> userIds, String name)async{
+    String newChatId = await ChatRepository().createGroupChat(userIds, name);
+
+    MessagesRepository().sendDefoltMessage(newChatId);
+
+    ChatModel? chat = await ChatRepository().getChatById(newChatId);
+
+    final chatController = Get.find<ChatController>();
+    chatController.chats.insert(0, chat!);
+
+    return chat;
+  }
+
+
+  Future<String> createGroupChat(List<String> userIds, String name) async {
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
     List<String> companionsIds = [...userIds, currentUserId];
 
-    ChatModel newChat = ChatModel(
-      id: '',
-      name: name,
-      isGroup: true,
-      companionsIds: companionsIds,
-      messages: [     ],
-    );
-
     final docRef = await firestore.collection('chats').add({
-      'companionsIds': newChat.companionsIds,
+      'companionsIds': companionsIds,
       'owner': currentUserId,
-      'isGroup' : newChat.isGroup,
-      'name':newChat.name,
+      'isGroup' : true,
+      'name':name,
       'editProfileData': false,
       'addNewMember': false,
     });
-    MessageModel newMessage = MessageModel(
-        senderId: currentUserId,
-        text: 'Вас додали до чату',
-        time: DateTime.now() ,
-        status: false,
-        isEdited: false,
-        messageType: MessageType.noti
-    );
-    newChat.id = docRef.id;
 
-    await addChatIdToUsers(newChat.id, newChat.companionsIds);
-    await MessagesRepository().sendMessage(newChat.id, newMessage);
+    await addChatIdToUsers(docRef.id, companionsIds);
 
-    return newChat;
+    return docRef.id;
   }
 
   Future<void> deleteChat(String chatId) async {

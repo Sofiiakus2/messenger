@@ -15,7 +15,7 @@ class ChatsPage extends StatelessWidget {
     return Scaffold(
       drawer: const NavBar(),
       floatingActionButton: FloatingActionButton(
-          onPressed: (){
+          onPressed: () {
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,

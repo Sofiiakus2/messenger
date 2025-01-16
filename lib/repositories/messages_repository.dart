@@ -18,6 +18,22 @@ class MessagesRepository{
     }
   }
 
+  Future<void>sendDefoltMessage(String chatId)async {
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
+    MessageModel newMessage = MessageModel(
+        senderId: currentUserId,
+        text: 'Вас додали до чату',
+        time: DateTime.now() ,
+        status: false,
+        isEdited: false,
+        messageType: MessageType.noti
+    );
+
+    await MessagesRepository().sendMessage(chatId, newMessage);
+
+  }
+
 
   Future<MessageModel?> getLastMessageByChatId(String chatId) async {
     try {

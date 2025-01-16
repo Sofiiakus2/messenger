@@ -74,7 +74,7 @@ class AllChats extends StatelessWidget {
                                softWrap: true,
                              ),
                             Text(
-                              chat.lastMessage ?? '',
+                              chat.lastMessage ?? 'Новий чат',
                               style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.black),
                               textAlign: TextAlign.center,
                               softWrap: true,
@@ -84,8 +84,9 @@ class AllChats extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        formatLastMessageTime(chat.lastMessageTime!),
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.black),
+                          chat.lastMessageTime != null ? formatLastMessageTime(chat.lastMessageTime!) : formatLastMessageTime(DateTime.now()),
+
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.black),
                         textAlign: TextAlign.center,
                         softWrap: true,
                       ),

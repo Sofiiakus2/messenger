@@ -86,17 +86,17 @@ String formatLastMessageTime(DateTime time) {
   final diff = now.difference(time);
 
   if (time.isAfter(today)) {
-    // Формат HH:mm
+
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   } else if (diff.inDays <= 7) {
-    // Назва дня тижня
+
     const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     return daysOfWeek[time.weekday - 1];
   } else if (time.year == now.year) {
-    // Формат dd.MM
+
     return '${time.day.toString().padLeft(2, '0')}.${time.month.toString().padLeft(2, '0')}';
   } else {
-    // Формат dd.MM.yyyy
+
     return '${time.day.toString().padLeft(2, '0')}.${time.month.toString().padLeft(2, '0')}.${time.year}';
   }
 }

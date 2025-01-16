@@ -7,7 +7,7 @@ class ChatController extends GetxController {
   var chats = <ChatModel>[].obs;
   var companions = <String, UserModel>{}.obs;
 
-  void fetchUserChats() async {
+  Future<void> fetchUserChats() async {
     final chatIds = await ChatRepository().getChatIdsByUserId().first;
     final chatFutures = chatIds.map(
             (id) => ChatRepository()
@@ -37,9 +37,7 @@ class ChatController extends GetxController {
     chats.assignAll(filteredChats);
     companions.assignAll(Map.fromEntries(companionsData));
 
-    // chats.value = filteredChats;
-    // companions.value = Map.fromEntries(companionsData);
-  }
+ }
 
   @override
   void onInit() {

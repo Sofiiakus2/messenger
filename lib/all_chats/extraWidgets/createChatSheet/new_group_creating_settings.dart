@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:messanger/repositories/chat_repository.dart';
 
+import '../../../controllers/chat_controller.dart';
 import '../../../models/user_model.dart';
 import '../../../theme.dart';
 
@@ -63,16 +66,19 @@ class _NewGroupCreatingSettingsState extends State<NewGroupCreatingSettings> {
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                     TextButton(
-                      onPressed: () {
-                        if(groupNameController.text.isNotEmpty){
+                      onPressed: () async{
+                       if(groupNameController.text.isNotEmpty){
                           List<String> userIds = widget.selectedUsers.keys
                               .map((user) => user.id)
                               .where((id) => id != null)
                               .map((id) => id!)
                               .toList();
-                          ChatRepository().createGroupChat(userIds, FirebaseAuth.instance.currentUser!.uid, groupNameController.text);
-                          widget.onClose();
+                          ChatRepository().createAndGetGroupChat(userIds, groupNameController.text);
+                         widget.onClose();
                         }
+
+
+
                       },
                       child: Text(
                         'Створити',
