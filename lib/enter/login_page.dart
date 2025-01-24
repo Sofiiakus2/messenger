@@ -16,8 +16,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController emailController = TextEditingController();
+  TextEditingController loginController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  bool isLoginMethodEmail = false;
 
   @override
   Widget build(BuildContext context) {
@@ -58,9 +59,18 @@ class _LoginPageState extends State<LoginPage> {
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                   const SizedBox(height: 40),
-                  buildInputField(context, 'Email', emailController, 'yourEmail@gmail.com'),
+                  buildInputField(
+                      context, 'Телефон',
+                      loginController, 'Логін',
+                      showToggle: true,
+                      onMethodChanged: (value){
+                        setState(() {
+                          isLoginMethodEmail = value;
+                        });
+                      }
+                  ),
                   const SizedBox(height: 20),
-                  buildInputField(context, 'Password', passwordController, '●●●●●●', isPassword: true),
+                  buildInputField(context, 'Password', passwordController, '●●●●●●', isPassword: true, showToggle: false),
                   const SizedBox(height: 40),
                   Container(
                     width: screenSize.width,
@@ -68,9 +78,15 @@ class _LoginPageState extends State<LoginPage> {
                     margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: ElevatedButton(
                         onPressed: () async{
-                          User? user = await AuthRepository().loginUser(emailController.text, passwordController.text);
-                          await AuthLocalStorage().saveUserId(user!.uid);
-                          Get.toNamed('/');
+                          if(isLoginMethodEmail){
+                            User? user = await AuthRepository().loginUserWithEmail(loginController.text, passwordController.text);
+                            await AuthLocalStorage().saveUserId(user!.uid);
+                            Get.toNamed('/');
+                          }else{
+
+                          }
+                          //todo: create login
+
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,

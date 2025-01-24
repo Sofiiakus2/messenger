@@ -13,8 +13,41 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
+  TextEditingController loginController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  String? passwordError;
+  bool isLoginMethodEmail = false;
+  String? validationMessage;
+
+  void validatePassword() {
+    setState(() {
+      if (passwordController.text.length < 6) {
+        passwordError = 'Пароль повинен містити щонайменше 6 символів';
+      } else {
+        passwordError = null;
+      }
+    });
+  }
+
+  void validateInput() {
+    if (isLoginMethodEmail) {
+      // Перевірка на коректність пошти
+      final emailRegex = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+      if (!emailRegex.hasMatch(loginController.text)) {
+        validationMessage = 'Введіть коректну електронну пошту';
+      } else {
+        validationMessage = null;
+      }
+    } else {
+      // Перевірка на коректність номера телефону (в форматі +380987654321)
+      final phoneRegex = RegExp(r"^\+380\d{9}$");
+      if (!phoneRegex.hasMatch(loginController.text)) {
+        validationMessage = 'Номер телефону має бути у форматі: +380987654321';
+      } else {
+        validationMessage = null;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,13 +90,54 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 children: [
                   const SizedBox(height: 40),
-                  buildInputField(context, 'Ім\'я', nameController, 'Іван'),
+                  buildInputField(context, 'Ім\'я', nameController, 'Іван', showToggle: false),
                   const SizedBox(height: 20),
-                  buildInputField(context, 'Email', emailController, 'yourEmail@gmail.com'),
+                  buildInputField(
+                      context, 'Телефон',
+                      loginController,
+                      'Логін',
+                      showToggle: true,
+                      onChanged: (_) => validateInput(),
+                      onMethodChanged: (value){
+                        setState(() {
+                          isLoginMethodEmail = value;
+                        });
+                        validateInput();
+                      }
+                  ),
+                  if (validationMessage != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        validationMessage!,
+                        style: TextStyle(color: thirdColor, fontSize: 14, fontWeight: FontWeight.w600),
+                      ),
+                    ),
                   const SizedBox(height: 20),
-                  buildInputField(context, 'Пароль', passwordController, '●●●●●●', isPassword: true),
-                  const SizedBox(height: 40),
-                  buildRegisterButton(context, nameController, emailController, passwordController),
+                  buildInputField(
+                    context,
+                    'Пароль',
+                    passwordController,
+                    '●●●●●●',
+                    isPassword: true,
+                    showToggle: false,
+                    onChanged: (_) => validatePassword(),
+                  ),
+                  if (passwordError != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        passwordError!,
+                        style: TextStyle(color: thirdColor, fontSize: 14, fontWeight: FontWeight.w600),
+                      ),
+                    ),                  const SizedBox(height: 40),
+                  buildRegisterButton(
+                      context,
+                      nameController,
+                      loginController,
+                      passwordController,
+                      isLoginMethodEmail
+                  ),
                   const Expanded(child: SizedBox()),
                   TextButton(
                     onPressed: () {
