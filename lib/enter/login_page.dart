@@ -81,13 +81,15 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         child: Text('Увійти', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: primaryColor, fontWeight: FontWeight.w600),)),
                   ),                  const Expanded(child: SizedBox()),
-                  TextButton(
-                    onPressed: () {
-                      Get.toNamed('/signUp');
-                    },
-                    child: Text(
-                      'Ще немає акаунту? Зареєструватися!',
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.black),
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        Get.toNamed('/signUp');
+                      },
+                      child: Text(
+                        'Ще немає акаунту? Зареєструватися!',
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.black),
+                      ),
                     ),
                   ),
                 ],

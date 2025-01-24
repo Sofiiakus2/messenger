@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:messanger/all_chats/extraWidgets/createChatSheet/users_list_view.dart';
 import 'package:messanger/personal_chat/extraWidgets/custom_app_bar.dart';
 import 'package:messanger/repositories/auth_local_storage.dart';
@@ -27,8 +26,9 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
 
   @override
   void initState() {
-    super.initState();
     _loadData();
+    super.initState();
+
   }
 
   Future<void> _loadData() async {
@@ -55,6 +55,7 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: primaryColor,
       body: Stack(
@@ -64,9 +65,16 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
               CustomAppBar(
                 showActions: _showActions,
                 onShowActionsChanged: (bool value) {
-                  setState(() {
-                    _showActions = value;
-                  });
+                  if(chat?.isGroup == false){
+                    setState(() {
+                      _showActions = false;
+                    });
+                  }else{
+                    setState(() {
+                      _showActions = value;
+                    });
+                  }
+
                 },
               ),
               CircleAvatar(
@@ -74,11 +82,14 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
                 backgroundColor: Colors.white,
               ),
               Text(
-                chat!.isGroup == true
+                chat != null
+                    ? (chat!.isGroup == true
                     ? chat!.name.toString()
-                    : companion!.name,
+                    : (companion?.name ?? ''))
+                    : '',
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 26),
               ),
+
               SizedBox(height: 30,),
               Expanded(
                 child: DefaultTabController(

@@ -55,10 +55,7 @@ class ChatActions extends StatelessWidget {
                           onChatNameUpdated: onChatNameUpdated,
                         );
                       },
-                    ).then((_) {
-                      print('Modal bottom sheet closed');
-
-                    });
+                    );
                   }
                 },
                 child: Row(

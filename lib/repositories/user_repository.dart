@@ -201,18 +201,24 @@ class UserRepository{
     }
   }
 
-  Future<void> addContactToFavorites(String contactId) async {
+  Future<void> addContactToFavorites(List<String> contactIds) async {
     try {
       final currentUser = auth.currentUser;
 
       UserModel? user = await UserRepository().getUser(currentUser!.uid);
 
-      await user!.addFavoriteContact(contactId);
+      final contactToAdd = contactIds.firstWhere(
+            (contactId) => contactId != currentUser.uid,
+        orElse: () => throw Exception('Контакт, відмінний від поточного користувача, не знайдено'),
+      );
 
+      await user!.addFavoriteContact(contactToAdd);
     } catch (e) {
       rethrow;
     }
   }
+
+
 
 
 

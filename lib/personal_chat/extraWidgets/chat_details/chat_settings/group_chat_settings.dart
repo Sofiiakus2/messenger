@@ -66,7 +66,6 @@ class _GroupChatSettingsState extends State<GroupChatSettings> {
             child: TextField(
               controller: groupNameController,
               onEditingComplete: (){
-                print('complete ${groupNameController.text}');
                 ChatRepository().updateChatName(widget.chat.id, groupNameController.text);
 
                 setState(() {

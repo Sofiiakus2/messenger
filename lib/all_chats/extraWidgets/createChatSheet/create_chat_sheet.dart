@@ -14,21 +14,43 @@ class CreateChatSheet extends StatefulWidget {
 }
 
 class _CreateChatSheetState extends State<CreateChatSheet> {
-  List<UserModel> users = [];
+  List<UserModel> filteredUsers = [];
   bool showNewGroup = false;
   Map<UserModel, bool> selectedUsers = {};
+  TextEditingController searchController = TextEditingController();
 
   void fetchUsers() async {
     final fetchedUsers = await UserRepository().getAllUsers();
     setState(() {
-      users = fetchedUsers;
+      filteredUsers = fetchedUsers;
+    });
+  }
+
+  void filterUsers(String query) {
+    final results = filteredUsers.where((user) {
+      final userName = user.name.toLowerCase();
+      final input = query.toLowerCase();
+      return userName.contains(input);
+    }).toList();
+
+    setState(() {
+      filteredUsers = results;
     });
   }
 
   @override
   void initState() {
     fetchUsers();
+    searchController.addListener(() {
+      filterUsers(searchController.text);
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -81,6 +103,7 @@ class _CreateChatSheetState extends State<CreateChatSheet> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: TextField(
+                    controller: searchController,
                     decoration: InputDecoration(
                       hintText: 'Пошук',
                       hintStyle: Theme.of(context).textTheme.labelSmall,
@@ -122,6 +145,9 @@ class _CreateChatSheetState extends State<CreateChatSheet> {
                       ListTile(
                         leading: Icon(Icons.person_add_alt, color: Colors.white, size: 30),
                         title: Text('Новий контакт', style: Theme.of(context).textTheme.labelMedium),
+                        onTap: (){
+
+                        },
                       ),
                     ],
                   ),
@@ -133,7 +159,11 @@ class _CreateChatSheetState extends State<CreateChatSheet> {
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(color: thirdColor),
                   ),
                 ),
-                Expanded(child: UsersListView(users: users, enableDeleting: false,))
+                Expanded(child: Container(
+                    margin: EdgeInsets.only(top: 10),
+                    width: screenSize.width,
+                    color: thirdColor.withOpacity(0.4),
+                    child: UsersListView(users: filteredUsers, enableDeleting: false,)))
               ],
             ),
           ),

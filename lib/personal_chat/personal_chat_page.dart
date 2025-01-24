@@ -248,6 +248,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
   void _hideMessageActions() {
     setState(() {
       _showActions = false;
+      _showSettingsActions = false;
     });
   }
 

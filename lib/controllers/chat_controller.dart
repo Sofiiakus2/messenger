@@ -9,6 +9,9 @@ class ChatController extends GetxController {
   var chats = <ChatModel>[].obs;
   var companions = <String, UserModel>{}.obs;
   var favouriteUsers = <UserModel>[].obs;
+  var filteredChats = <ChatModel>[].obs;
+  var searchQuery = ''.obs;
+
 
   Future<void> fetchUserChats() async {
     final chatIds = await ChatRepository().getChatIdsByUserId().first;
@@ -49,6 +52,22 @@ class ChatController extends GetxController {
       favouriteUsers.value = await UserRepository().getUsersByIds(favUsers);
     } else {
       favouriteUsers.value = [];
+    }
+  }
+
+  void filterChats(String query) {
+
+    searchQuery.value = query;
+    if (query.isEmpty) {
+      filteredChats.assignAll(chats);
+    } else {
+      final lowerCaseQuery = query.toLowerCase();
+      final filtered = chats.where((chat) {
+        final companionName = companions[chat.id]?.name?.toLowerCase() ?? '';
+        final chatName = chat.name?.toLowerCase() ?? '';
+        return companionName.contains(lowerCaseQuery) || chatName.contains(lowerCaseQuery);
+      }).toList();
+      filteredChats.assignAll(filtered);
     }
   }
 

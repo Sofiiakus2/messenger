@@ -33,7 +33,7 @@ class ChatSettingsActions extends StatelessWidget {
           width: 200,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: thirdColor.withOpacity(0.3),
+            color: thirdColor.withOpacity(0.5),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -67,13 +67,41 @@ class ChatSettingsActions extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(height: 10),
+              GestureDetector(
+                onTap: () async {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return DeletingConfirmationDialog(
+                        chatId: chat.id,
+                      );
+                    },
+                  );
+                },
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.search,
+                      color: Colors.red,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      "Пошук",
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.red),
+                    ),
+                  ],
+                ),
+              ),
               if(chat.isGroup == false)
                 Column(
                   children: [
                     const SizedBox(height: 10),
                     GestureDetector(
                       onTap: () async {
-                        UserRepository().addContactToFavorites(chat.companionsIds[0]);
+                        UserRepository().addContactToFavorites(chat.companionsIds);
                         onShowActionsChanged(false);
                         },
                       child: Row(

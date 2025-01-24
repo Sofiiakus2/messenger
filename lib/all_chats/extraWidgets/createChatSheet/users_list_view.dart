@@ -44,9 +44,7 @@ class _UsersListViewState extends State<UsersListView> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     return Container(
-      margin: EdgeInsets.only(top: 10),
-      width: screenSize.width,
-      color: thirdColor.withOpacity(0.4),
+
       child: ListView.builder(
         physics: AlwaysScrollableScrollPhysics(),
         itemCount: widget.users.length,

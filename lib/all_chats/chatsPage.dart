@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:messanger/all_chats/extraWidgets/createChatSheet/create_chat_sheet.dart';
+import 'package:messanger/all_chats/extraWidgets/searchChatsPage/search_chats_view.dart';
 import 'package:messanger/nav_bar/nav_bar.dart';
 import 'package:messanger/theme.dart';
 
 import 'extraWidgets/all_chats.dart';
 import 'extraWidgets/favourite_contacts.dart';
 
-class ChatsPage extends StatelessWidget {
+class ChatsPage extends StatefulWidget {
   const ChatsPage({super.key});
 
+  @override
+  State<ChatsPage> createState() => _ChatsPageState();
+}
+
+class _ChatsPageState extends State<ChatsPage> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +66,9 @@ class ChatsPage extends StatelessWidget {
                   ),
 
                   IconButton(
-                      onPressed: (){},
+                      onPressed: (){
+                        Navigator.of(context).push(_createRoute());
+                      },
                       icon: const Icon(Icons.search, color: fourthColor, size: 30,)),
                 ],
               ),
@@ -76,3 +89,23 @@ class ChatsPage extends StatelessWidget {
     );
   }
 }
+
+Route _createRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => const SearchChatsView(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 1.0);
+      const end = Offset.zero;
+      const curve = Curves.easeInOut;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      var offsetAnimation = animation.drive(tween);
+
+      return SlideTransition(
+        position: offsetAnimation,
+        child: child,
+      );
+    },
+  );
+}
+
