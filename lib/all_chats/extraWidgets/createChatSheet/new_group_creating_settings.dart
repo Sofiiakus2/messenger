@@ -1,10 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:messanger/repositories/chat_repository.dart';
 
-import '../../../controllers/chat_controller.dart';
 import '../../../models/user_model.dart';
 import '../../../theme.dart';
 
@@ -14,7 +10,7 @@ class NewGroupCreatingSettings extends StatefulWidget {
   final Function onClose;
   final Map<UserModel, bool> selectedUsers;
 
-  const NewGroupCreatingSettings({
+  const NewGroupCreatingSettings({super.key, 
     required this.showCreatingSettings,
     required this.onBackPressed,
     required this.onClose,
@@ -109,7 +105,7 @@ class _NewGroupCreatingSettingsState extends State<NewGroupCreatingSettings> {
                       child: Icon(Icons.photo_camera, color: primaryColor, size: 36,),
                     ),
                     SizedBox(width: 20,),
-                    Container(
+                    SizedBox(
                       height: 50,
                       width: 270,
                       child: TextField(

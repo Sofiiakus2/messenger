@@ -9,12 +9,12 @@ class ConfirmationDialog extends StatelessWidget {
   final bool isCurrentUser;
 
   const ConfirmationDialog({
-    Key? key,
+    super.key,
     required this.name,
     required this.chatId,
     required this.userId,
     required this.isCurrentUser
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class ConfirmationDialog extends StatelessWidget {
 
           },
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(secondaryColor),
+            backgroundColor: WidgetStateProperty.all(secondaryColor),
           ),
           child: Text("Підтвердити", style: Theme.of(context).textTheme.titleSmall?.copyWith(color: thirdColor),),
         ),

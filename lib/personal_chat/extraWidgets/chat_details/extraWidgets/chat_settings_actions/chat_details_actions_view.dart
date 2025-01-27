@@ -12,12 +12,12 @@ class ChatActions extends StatelessWidget {
   final Function(String) onChatNameUpdated;
 
   const ChatActions({
-    Key? key,
+    super.key,
     required this.chat,
     required this.showActions,
     required this.onShowActionsChanged,
     required this.onChatNameUpdated,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

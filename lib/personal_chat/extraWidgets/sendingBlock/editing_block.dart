@@ -6,9 +6,9 @@ class EditingBlock extends StatelessWidget {
   final Function cancelEditMessage;
 
   const EditingBlock({
-    Key? key,
+    super.key,
     required this.cancelEditMessage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

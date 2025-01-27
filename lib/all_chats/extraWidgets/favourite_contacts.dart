@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:messanger/controllers/chat_controller.dart';
-import 'package:messanger/models/user_model.dart';
 import 'package:messanger/repositories/chat_repository.dart';
 
 import '../../models/chat_model.dart';
-import '../../repositories/user_repository.dart';
 import '../../theme.dart';
 
 class FavouriteContacts extends StatefulWidget {

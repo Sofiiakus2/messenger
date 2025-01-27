@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:messanger/all_chats/extraWidgets/searchChatsPage/search_tabbar.dart';
 
 import '../../../controllers/chat_controller.dart';
 import '../../../models/user_model.dart';
 import '../../../repositories/user_repository.dart';
 import '../../../theme.dart';
-import '../chats_block_view.dart';
-import '../createChatSheet/users_list_view.dart';
 
 class SearchChatsView extends StatefulWidget {
   const SearchChatsView({super.key,});

@@ -63,7 +63,7 @@ class ChatController extends GetxController {
     } else {
       final lowerCaseQuery = query.toLowerCase();
       final filtered = chats.where((chat) {
-        final companionName = companions[chat.id]?.name?.toLowerCase() ?? '';
+        final companionName = companions[chat.id]?.name.toLowerCase() ?? '';
         final chatName = chat.name?.toLowerCase() ?? '';
         return companionName.contains(lowerCaseQuery) || chatName.contains(lowerCaseQuery);
       }).toList();

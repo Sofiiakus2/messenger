@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:messanger/models/chat_model.dart';
 import 'package:messanger/personal_chat/extraWidgets/chat_details/extraWidgets/chat_settings_actions/deleting_confirmation_dialog.dart';
-import 'package:messanger/repositories/auth_local_storage.dart';
 import 'package:messanger/repositories/user_repository.dart';
 import 'package:messanger/theme.dart';
 
-import '../../chat_settings/group_chat_settings.dart';
 
 class ChatSettingsActions extends StatelessWidget {
   final ChatModel chat;
@@ -13,11 +11,11 @@ class ChatSettingsActions extends StatelessWidget {
   final Function(bool) onShowActionsChanged;
 
   const ChatSettingsActions({
-    Key? key,
+    super.key,
     required this.chat,
     required this.showActions,
     required this.onShowActionsChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

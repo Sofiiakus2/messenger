@@ -9,7 +9,6 @@ import 'package:messanger/personal_chat/personal_chat_page.dart';
 import 'package:messanger/splash_screen.dart';
 import 'package:messanger/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 
 void main() async {

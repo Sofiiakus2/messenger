@@ -39,10 +39,8 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
       if (chat!.isGroup == false) {
         companion = await UserModel.getChatCompanion(chat!);
       }
-      if (chat!.companionsIds != null) {
-        usersGroupList = await UserRepository().getUsersByIds(chat!.companionsIds!);
-      }
-
+      usersGroupList = await UserRepository().getUsersByIds(chat!.companionsIds);
+    
       currentUserId = await AuthLocalStorage().getUserId();
       setState(() {});
 

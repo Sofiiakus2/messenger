@@ -9,12 +9,12 @@ class ReplyForwardBlock extends StatelessWidget {
   final Function cancelEditMessage;
 
   const ReplyForwardBlock({
-    Key? key,
+    super.key,
     required this.isReply,
     required this.isForward,
     required this.message,
     required this.cancelEditMessage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

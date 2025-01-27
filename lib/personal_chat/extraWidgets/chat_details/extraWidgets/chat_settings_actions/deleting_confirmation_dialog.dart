@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:messanger/repositories/chat_repository.dart';
-import 'package:messanger/repositories/user_repository.dart';
 
 import '../../../../../theme.dart';
 
@@ -10,9 +9,9 @@ class DeletingConfirmationDialog extends StatelessWidget {
   final String chatId;
 
   const DeletingConfirmationDialog({
-    Key? key,
+    super.key,
     required this.chatId,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +49,7 @@ class DeletingConfirmationDialog extends StatelessWidget {
 
           },
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(secondaryColor),
+            backgroundColor: WidgetStateProperty.all(secondaryColor),
           ),
           child: Text("Підтвердити", style: Theme.of(context).textTheme.titleSmall?.copyWith(color: thirdColor),),
         ),

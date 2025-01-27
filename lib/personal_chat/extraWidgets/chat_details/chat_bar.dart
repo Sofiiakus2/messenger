@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:messanger/models/chat_model.dart';
 
 class ChatBar extends StatelessWidget {

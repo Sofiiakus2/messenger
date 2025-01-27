@@ -60,7 +60,7 @@ class _GroupChatSettingsState extends State<GroupChatSettings> {
               )
             ],
           ),
-          Container(
+          SizedBox(
             height: 50,
             width: screenSize.width/2,
             child: TextField(

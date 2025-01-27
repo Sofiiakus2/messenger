@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:messanger/all_chats/extraWidgets/createChatSheet/new_group_creating_settings.dart';
 import 'package:messanger/all_chats/extraWidgets/createChatSheet/selectedUsersWrap/selected_users_block.dart';
-import 'package:messanger/all_chats/extraWidgets/createChatSheet/selectedUsersWrap/selected_users_wrap.dart';
 import 'package:messanger/all_chats/extraWidgets/createChatSheet/user_selection_list.dart';
 
 import '../../../models/user_model.dart';
@@ -14,7 +13,7 @@ class NewGroupWidget extends StatefulWidget {
   final Function(UserModel) onUserTap;
   final Function onBackPressed;
 
-  const NewGroupWidget({
+  const NewGroupWidget({super.key, 
     required this.showNewGroup,
     required this.screenSize,
     required this.selectedUsers,

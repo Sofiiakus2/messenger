@@ -12,8 +12,8 @@ class UserSelectionList extends StatefulWidget {
 
     required this.selectedUsers,
     required this.onUserTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<UserSelectionList> createState() => _UserSelectionListState();

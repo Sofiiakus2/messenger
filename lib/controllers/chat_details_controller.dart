@@ -10,18 +10,16 @@ class ChatDetailsController extends GetxController {
   Future<void> loadChatData(ChatModel chatModel) async {
     chat.value = chatModel;
 
-    if (chatModel.companionsIds != null) {
-      usersGroupList.value =
-      await UserRepository().getUsersByIds(chatModel.companionsIds!);
+    usersGroupList.value =
+    await UserRepository().getUsersByIds(chatModel.companionsIds);
     }
-  }
 
   Future<void> resetUsers() async {
     if (chat.value != null) {
       chat.value!.companionsIds = ['newUserId1', 'newUserId2'];
       
       usersGroupList.value =
-      await UserRepository().getUsersByIds(chat.value!.companionsIds!);
+      await UserRepository().getUsersByIds(chat.value!.companionsIds);
     }
   }
 }

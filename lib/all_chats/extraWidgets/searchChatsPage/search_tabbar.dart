@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:messanger/theme.dart';
 
 import '../../../models/user_model.dart';
-import '../../../repositories/user_repository.dart';
 import '../chats_block_view.dart';
 import '../createChatSheet/users_list_view.dart';
 
