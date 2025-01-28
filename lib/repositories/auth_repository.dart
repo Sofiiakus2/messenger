@@ -1,5 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import '../theme.dart';
 
 class AuthRepository{
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -24,58 +28,6 @@ class AuthRepository{
     }
   }
 
-  Future<void> verifyPhoneNumber(String phoneNumber, ) async {
-
-    await auth.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      timeout: const Duration(seconds: 60),
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        // Автоматичне завершення верифікації (якщо можливо)
-        //UserCredential userCredential = await auth.signInWithCredential(credential);
-        print('Автоматична верифікація успішна: ');
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        // Обробка помилок
-        print('Помилка верифікації: ${e.message}');
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        // Збереження verificationId для подальшого використання
-        print('Код надіслано. Verification ID: $verificationId');
-      //  onCodeSent(verificationId); // Передача verificationId у callback
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        // Таймаут для автоматичного отримання коду
-        print('Час очікування завершився. Verification ID: $verificationId');
-      },
-
-    );
-  }
-
-
-  Future<void> registerUserWithPhone(String phoneNumber, String verificationId, String smsCode, String name) async {
-    try {
-      // Створення PhoneAuthCredential за допомогою verificationId і smsCode
-      PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
-        verificationId: verificationId,
-        smsCode: smsCode,
-      );
-
-      // Використовуємо отриману облікову інформацію для входу
-      UserCredential userCredential = await auth.signInWithCredential(phoneAuthCredential);
-
-      String userId = userCredential.user!.uid;
-
-      // Збереження додаткових даних користувача в Firestore
-      await firestore.collection('users').doc(userId).set({
-        'name': name,
-        'phone': phoneNumber,
-      });
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-
   Future<User?> loginUserWithEmail(String email, String password) async {
     try {
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
@@ -89,20 +41,83 @@ class AuthRepository{
     }
   }
 
-  Future<User?> loginUserWithPhone(String verificationId, String smsCode) async {
-    try {
-      // Створення PhoneAuthCredential за допомогою verificationId і smsCode
-      PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
-        verificationId: verificationId,
-        smsCode: smsCode,
-      );
 
-      // Використовуємо отриману облікову інформацію для входу
-      UserCredential userCredential = await auth.signInWithCredential(phoneAuthCredential);
+  Future<void> registerUserWithPhone(String phone, String name, String Id) async {
+    try {
+      await firestore.collection('users').doc(Id).set({
+        'name': name,
+        'phone': phone,
+      });
+
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<User?> loginUserWithPhone(String phone, String password) async {
+    try {
+
+      // UserCredential userCredential = await auth.signInWithPhoneNumber(
+      //   phone: phone
+      // );
 
       return userCredential.user;
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<void> sendOtp(
+      String phoneNumber,
+      Function(String verificationId) codeSent,
+      BuildContext context
+      ) async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      verificationCompleted:  (PhoneAuthCredential credential) {
+        //await FirebaseAuth.instance.signInWithCredential(credential);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Phone number auto-verified',
+              style: Theme.of(context).textTheme.bodyLarge,),
+            backgroundColor: thirdColor,
+            duration: Duration(seconds: 3),
+          ),
+        );
+        print("Phone number auto-verified!");
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Verification failed',
+            style: Theme.of(context).textTheme.bodyLarge,),
+            backgroundColor: thirdColor,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        codeSent(verificationId);
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+
+      },
+    );
+  }
+
+  Future<User?> verifyOtp(String verificationId, String smsCode) async {
+    final credential = PhoneAuthProvider.credential(
+      verificationId: verificationId,
+      smsCode: smsCode,
+    );
+
+    try {
+      final UserCredential userCredential =
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      return userCredential.user;
+    } catch (e) {
+      print("Error verifying OTP: $e");
+      return null;
     }
   }
 

@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:googleapis/servicecontrol/v2.dart';
+import 'package:messanger/enter/extraWidgets/code_input_dialog.dart';
 import 'package:messanger/enter/extraWidgets/custom_login_toggle.dart';
 
+import '../../repositories/auth_local_storage.dart';
 import '../../repositories/auth_repository.dart';
 import '../../theme.dart';
 
@@ -81,6 +85,7 @@ Widget buildRegisterButton(BuildContext context, TextEditingController nameContr
     height: 80,
     margin: const EdgeInsets.symmetric(horizontal: 20),
     child: ElevatedButton(
+
       onPressed: () {
         if(isLoginMethodEmail){
           AuthRepository().registerUserWithEmail(loginController.text, passwordController.text, nameController.text);
@@ -89,22 +94,27 @@ Widget buildRegisterButton(BuildContext context, TextEditingController nameContr
           nameController.clear();
           Get.toNamed('/login');
         }else{
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(
-          //     content: Text('Реєстрація за телефоном недоступна',
-          //     style: Theme.of(context).textTheme.bodyLarge,),
-          //     backgroundColor: thirdColor,
-          //     duration: Duration(seconds: 3),
-          //   ),
-          // );
-          // print(loginController.text);
-          AuthRepository().verifyPhoneNumber(
+          AuthRepository().sendOtp(
               loginController.text,
-           //   onCodeSent(){}
+                (String verificationId) {
+              showDialog(
+                  context: context, 
+                  builder: (BuildContext context){
+                    return CodeInputDialog(
+                        onCodeEntered: (code) async {
+                          User? user = await AuthRepository().verifyOtp(verificationId, code);
+                          AuthRepository().registerUserWithPhone(loginController.text, nameController.text, user!.uid );
+                          loginController.clear();
+                          passwordController.clear();
+                          nameController.clear();
+                          await AuthLocalStorage().saveUserId(user!.uid);
+                          Get.toNamed('/');
+                    });
+                  });
+            },
+            context
           );
-         // AuthRepository().registerUserWithPhone(loginController.text, verificationId, smsCode, nameController.text)
         }
-        //todo: create signup
 
       },
       style: ElevatedButton.styleFrom(
@@ -121,3 +131,4 @@ Widget buildRegisterButton(BuildContext context, TextEditingController nameContr
     ),
   );
 }
+

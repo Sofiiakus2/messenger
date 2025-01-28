@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../repositories/auth_repository.dart';
 import '../theme.dart';
 
 import 'extraWidgets/auth_widgets.dart';
@@ -18,6 +20,7 @@ class _SignUpPageState extends State<SignUpPage> {
   String? passwordError;
   bool isLoginMethodEmail = false;
   String? validationMessage;
+  bool isLoading = false;
 
   void validatePassword() {
     setState(() {
@@ -130,7 +133,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         passwordError!,
                         style: TextStyle(color: thirdColor, fontSize: 14, fontWeight: FontWeight.w600),
                       ),
-                    ),                  const SizedBox(height: 40),
+                    ),
+                  const SizedBox(height: 40),
+
                   buildRegisterButton(
                       context,
                       nameController,

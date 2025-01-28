@@ -9,7 +9,8 @@ class UserModel{
   String name;
   String? image;
   String? token;
-  String email;
+  String? email;
+  String? phone;
   bool? status;
   String? description;
   List<String>? favoriteContacts;
@@ -20,7 +21,8 @@ class UserModel{
     required this.name,
     this.image,
     this.token,
-    required this.email,
+    this.email,
+    this.phone,
     this.status,
     this.description,
     this.favoriteContacts
@@ -33,6 +35,7 @@ class UserModel{
       'image': image,
       'token': token,
       'email': email,
+      'phone': phone,
       'status': status,
       'description': description,
       'favoriteContacts': favoriteContacts!.isEmpty ? [] : favoriteContacts, // Перевірка на пустий список
@@ -46,6 +49,7 @@ class UserModel{
       image: map['image'],
       token: map['token'],
       email: map['email'],
+      phone: map['phone'],
       status: map['status'],
       description: map['description'],
       favoriteContacts: map['favoriteContacts'] != null ? List<String>.from(map['favoriteContacts']) : [], // Безпечне перетворення на список

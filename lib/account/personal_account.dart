@@ -91,20 +91,28 @@ class _PersonalAccountState extends State<PersonalAccount> {
                               : const SizedBox.shrink(),
 
                           const SizedBox(height: 20,),
-                          user.email.isNotEmpty
-                              ? Text(
-                            user.email,
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .labelMedium
-                                ?.copyWith(fontSize: 20, color: secondaryColor, decoration: TextDecoration.underline ),
-                          )
-                              : const SizedBox.shrink(),
-
+                          if(user.email != null)
+                            Text(
+                              user.email!,
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(fontSize: 20, color: secondaryColor, decoration: TextDecoration.underline ),
+                            ),
+                          if(user.phone != null)
+                            Text(
+                              user.phone!,
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(fontSize: 20, color: secondaryColor, decoration: TextDecoration.underline ),
+                            ),
                           const SizedBox(height: 20,),
                           ElevatedButton(
                             onPressed: () {
+
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: secondaryColor,
