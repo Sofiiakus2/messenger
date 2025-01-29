@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:messanger/theme.dart';
 
+import '../all_chats/extraWidgets/searchChatsPage/search_chats_view.dart';
 import '../models/user_model.dart';
 import '../repositories/user_repository.dart';
 
@@ -12,7 +13,6 @@ class PersonalAccount extends StatefulWidget {
 }
 
 class _PersonalAccountState extends State<PersonalAccount> {
-  final bool _showActions = false;
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +112,7 @@ class _PersonalAccountState extends State<PersonalAccount> {
                           const SizedBox(height: 20,),
                           ElevatedButton(
                             onPressed: () {
-
+                              Navigator.of(context).push(_createRoute());
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: secondaryColor,
@@ -136,30 +136,6 @@ class _PersonalAccountState extends State<PersonalAccount> {
                             ),
                           ),
                           const SizedBox(height: 10,),
-                          ElevatedButton(
-                            onPressed: () {
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: secondaryColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Редагувати профіль',
-                                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    color: primaryColor,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                                const Icon(Icons.navigate_next_outlined)
-                              ],
-                            ),
-                          ),
 
                         ],
                       ),
@@ -183,4 +159,24 @@ class _PersonalAccountState extends State<PersonalAccount> {
       ),
     );
   }
+}
+
+
+Route _createRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => const SearchChatsView(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 1.0);
+      const end = Offset.zero;
+      const curve = Curves.easeInOut;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      var offsetAnimation = animation.drive(tween);
+
+      return SlideTransition(
+        position: offsetAnimation,
+        child: child,
+      );
+    },
+  );
 }

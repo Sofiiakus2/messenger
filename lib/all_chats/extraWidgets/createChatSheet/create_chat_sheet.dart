@@ -141,14 +141,14 @@ class _CreateChatSheetState extends State<CreateChatSheet> {
                           });
                         },
                       ),
-                      Divider(color: Colors.white),
-                      ListTile(
-                        leading: Icon(Icons.person_add_alt, color: Colors.white, size: 30),
-                        title: Text('Новий контакт', style: Theme.of(context).textTheme.labelMedium),
-                        onTap: (){
-
-                        },
-                      ),
+                     // Divider(color: Colors.white),
+                      // ListTile(
+                      //   leading: Icon(Icons.person_add_alt, color: Colors.white, size: 30),
+                      //   title: Text('Новий контакт', style: Theme.of(context).textTheme.labelMedium),
+                      //   onTap: (){
+                      //
+                      //   },
+                      // ),
                     ],
                   ),
                 ),

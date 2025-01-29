@@ -66,33 +66,6 @@ class ChatSettingsActions extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              GestureDetector(
-                onTap: () async {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return DeletingConfirmationDialog(
-                        chatId: chat.id,
-                      );
-                    },
-                  );
-                },
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.search,
-                      color: Colors.red,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      "Пошук",
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.red),
-                    ),
-                  ],
-                ),
-              ),
               if(chat.isGroup == false)
                 Column(
                   children: [

@@ -33,43 +33,40 @@ class _SearchTabbarState extends State<SearchTabbar> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    return Container(
-      child: Column(
-        children: [
-          TabBar(
+    return Column(
+      children: [
+        TabBar(
+          controller: _tabController,
+          indicatorColor: thirdColor,
+          labelColor: thirdColor,
+          unselectedLabelColor: secondaryColor,
+          indicatorSize: TabBarIndicatorSize.tab,
+          dividerColor: Colors.transparent,
+          tabs: const [
+            Tab(text: 'Чати'),
+            Tab(text: 'Контакти'),
+          ],
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.85,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: TabBarView(
             controller: _tabController,
-            indicatorColor: thirdColor,
-            labelColor: thirdColor,
-            unselectedLabelColor: secondaryColor,
-            indicatorSize: TabBarIndicatorSize.tab,
-            dividerColor: Colors.transparent,
-            tabs: const [
-              Tab(text: 'Чати'),
-              Tab(text: 'Контакти'),
+            children: [
+              ChatsBlockView(
+                chatController: widget.chatController,
+                chats: widget.chatController.filteredChats,
+                isMessageNeed: false,
+              ),
+              UsersListView(
+                users: widget.filteredUsers,
+                enableDeleting: false,)
+
             ],
           ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.85,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                ChatsBlockView(
-                  chatController: widget.chatController,
-                  chats: widget.chatController.filteredChats,
-                  isMessageNeed: false,
-                ),
-                UsersListView(
-                  users: widget.filteredUsers,
-                  enableDeleting: false,)
-
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -11,28 +11,33 @@ class CodeInputDialog extends StatefulWidget {
 }
 
 class _CodeInputDialogState extends State<CodeInputDialog> {
-  List<TextEditingController> _controllers = List.generate(6, (index) => TextEditingController());
-  List<String> _code = ['', '', '', '', '', ''];
+  final List<TextEditingController> _controllers = List.generate(6, (index) => TextEditingController());
+  final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
+  final List<String> _code = List.filled(6, '');
 
   @override
   void dispose() {
     for (var controller in _controllers) {
       controller.dispose();
     }
+    for (var node in _focusNodes) {
+      node.dispose();
+    }
     super.dispose();
   }
 
   void _onChanged(String value, int index) {
-    // Перевірка на введення цифри
-    if (value.isNotEmpty && value.length == 1) {
-      _code[index] = value; // Зберігаємо введену цифру
+    if (value.isNotEmpty) {
+      _code[index] = value;
       if (index < 5) {
-        FocusScope.of(context).nextFocus(); // Перехід до наступного поля
+        FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
+      } else {
+        FocusScope.of(context).unfocus();
       }
-    } else if (value.isEmpty) {
-      _code[index] = ''; // Очистка коду при видаленні
+    } else {
+      _code[index] = '';
       if (index > 0) {
-        FocusScope.of(context).previousFocus(); // Повернення до попереднього поля
+        FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
       }
     }
   }
@@ -46,7 +51,7 @@ class _CodeInputDialogState extends State<CodeInputDialog> {
         children: [
           Text('Введіть код'),
           GestureDetector(
-            onTap: (){
+            onTap: () {
               Navigator.pop(context);
             },
             child: CircleAvatar(
@@ -69,10 +74,10 @@ class _CodeInputDialogState extends State<CodeInputDialog> {
             width: 50,
             child: TextField(
               controller: _controllers[index],
+              focusNode: _focusNodes[index],
               keyboardType: TextInputType.number,
-              textInputAction: TextInputAction.next,
+              textInputAction: index < 5 ? TextInputAction.next : TextInputAction.done,
               maxLength: 1,
-              autofocus: index == 0,
               onChanged: (value) => _onChanged(value, index),
               decoration: InputDecoration(
                 counterText: '',
@@ -85,7 +90,7 @@ class _CodeInputDialogState extends State<CodeInputDialog> {
                 hintText: '-',
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               ),
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: thirdColor), // Жирний чорний текст
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: thirdColor),
             ),
           );
         }),
@@ -97,11 +102,9 @@ class _CodeInputDialogState extends State<CodeInputDialog> {
             widget.onCodeEntered(enteredCode);
             Navigator.of(context).pop();
           },
-          child: Text('Підтвердити', style: Theme.of(context).textTheme.titleMedium,),
+          child: Text('Підтвердити', style: Theme.of(context).textTheme.titleMedium),
         ),
-
       ],
     );
   }
 }
-

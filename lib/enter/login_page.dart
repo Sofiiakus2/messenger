@@ -6,6 +6,7 @@ import 'package:messanger/theme.dart';
 import '../repositories/auth_local_storage.dart';
 import '../repositories/auth_repository.dart';
 import 'extraWidgets/auth_widgets.dart';
+import 'extraWidgets/code_input_dialog.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -59,6 +60,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                   const SizedBox(height: 40),
+
                   buildInputField(
                       context, 'Телефон',
                       loginController, 'Логін',
@@ -70,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                       }
                   ),
                   const SizedBox(height: 20),
+                  if(isLoginMethodEmail)
                   buildInputField(context, 'Password', passwordController, '●●●●●●', isPassword: true, showToggle: false),
                   const SizedBox(height: 40),
                   Container(
@@ -83,7 +86,23 @@ class _LoginPageState extends State<LoginPage> {
                             await AuthLocalStorage().saveUserId(user!.uid);
                             Get.toNamed('/');
                           }else{
-
+                            AuthRepository().sendOtp(
+                                loginController.text,
+                                    (String verificationId) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context){
+                                        return CodeInputDialog(
+                                            onCodeEntered: (code) async {
+                                              User? user = await AuthRepository().verifyOtp(verificationId, code);
+                                              loginController.clear();
+                                              await AuthLocalStorage().saveUserId(user!.uid);
+                                              Get.toNamed('/');
+                                            });
+                                      });
+                                },
+                                context
+                            );
                           }
                           //todo: create login
 

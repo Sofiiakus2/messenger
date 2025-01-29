@@ -61,7 +61,7 @@ class AuthRepository{
       //   phone: phone
       // );
 
-      return userCredential.user;
+     // return userCredential.user;
     } catch (e) {
       rethrow;
     }

@@ -68,7 +68,7 @@ class _FavouriteContactsState extends State<FavouriteContacts> {
                         .textTheme
                         .labelMedium
                         ?.copyWith(fontWeight: FontWeight.bold,),),
-                    const Icon(Icons.more_horiz)
+
                   ],
                 ),
               ),

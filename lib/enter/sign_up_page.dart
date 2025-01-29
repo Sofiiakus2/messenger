@@ -117,6 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                     ),
                   const SizedBox(height: 20),
+                  if(isLoginMethodEmail)
                   buildInputField(
                     context,
                     'Пароль',

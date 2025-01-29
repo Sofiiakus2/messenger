@@ -105,7 +105,6 @@ Widget buildRegisterButton(BuildContext context, TextEditingController nameContr
                           User? user = await AuthRepository().verifyOtp(verificationId, code);
                           AuthRepository().registerUserWithPhone(loginController.text, nameController.text, user!.uid );
                           loginController.clear();
-                          passwordController.clear();
                           nameController.clear();
                           await AuthLocalStorage().saveUserId(user!.uid);
                           Get.toNamed('/');

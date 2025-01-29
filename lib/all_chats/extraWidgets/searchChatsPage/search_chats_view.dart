@@ -29,8 +29,11 @@ class _SearchChatsViewState extends State<SearchChatsView> {
 
   void fetchUsers() async {
     allUsers = await UserRepository().getAllUsers();
-    filteredUsers = allUsers; // Initially show all users
+    setState(() {
+      filteredUsers = allUsers;
+    });
   }
+
 
   void filterUsers(String searchTerm) {
     filteredUsers = allUsers.where((user) => user.name.toLowerCase().contains(searchTerm.toLowerCase())).toList();
