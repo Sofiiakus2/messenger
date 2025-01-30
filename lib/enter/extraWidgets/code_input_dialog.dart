@@ -4,7 +4,7 @@ import 'package:messanger/theme.dart';
 class CodeInputDialog extends StatefulWidget {
   final Function(String code) onCodeEntered;
 
-  const CodeInputDialog({Key? key, required this.onCodeEntered}) : super(key: key);
+  const CodeInputDialog({super.key, required this.onCodeEntered});
 
   @override
   _CodeInputDialogState createState() => _CodeInputDialogState();

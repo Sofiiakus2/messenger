@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:googleapis/servicecontrol/v2.dart';
 import 'package:messanger/enter/extraWidgets/code_input_dialog.dart';
 import 'package:messanger/enter/extraWidgets/custom_login_toggle.dart';
 
@@ -106,7 +105,7 @@ Widget buildRegisterButton(BuildContext context, TextEditingController nameContr
                           AuthRepository().registerUserWithPhone(loginController.text, nameController.text, user!.uid );
                           loginController.clear();
                           nameController.clear();
-                          await AuthLocalStorage().saveUserId(user!.uid);
+                          await AuthLocalStorage().saveUserId(user.uid);
                           Get.toNamed('/');
                     });
                   });
