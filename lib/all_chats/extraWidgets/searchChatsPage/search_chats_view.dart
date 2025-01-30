@@ -31,6 +31,7 @@ class _SearchChatsViewState extends State<SearchChatsView> {
     allUsers = await UserRepository().getAllUsers();
     setState(() {
       filteredUsers = allUsers;
+      chatController.filterChats('');
     });
   }
 

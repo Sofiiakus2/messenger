@@ -23,6 +23,22 @@ class NewGroupCreatingSettings extends StatefulWidget {
 
 class _NewGroupCreatingSettingsState extends State<NewGroupCreatingSettings> {
   TextEditingController groupNameController = TextEditingController();
+  bool isTriedToLeaveEmptyName = false;
+  FocusNode groupNameFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    groupNameFocusNode.addListener(() {
+      setState(() {});
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    groupNameFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +75,9 @@ class _NewGroupCreatingSettingsState extends State<NewGroupCreatingSettings> {
                     ),
                     Text(
                       'Нова група',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
                     ),
                     TextButton(
                       onPressed: () async{
@@ -71,10 +89,11 @@ class _NewGroupCreatingSettingsState extends State<NewGroupCreatingSettings> {
                               .toList();
                           ChatRepository().createAndGetGroupChat(userIds, groupNameController.text);
                          widget.onClose();
-                        }
-
-
-
+                        }else{
+                         setState(() {
+                           isTriedToLeaveEmptyName = true;
+                         });
+                       }
                       },
                       child: Text(
                         'Створити',
@@ -88,6 +107,17 @@ class _NewGroupCreatingSettingsState extends State<NewGroupCreatingSettings> {
                   ],
                 ),
               ),
+              if(isTriedToLeaveEmptyName)
+                Center(
+                  child: Text(
+                    'Введіть назву групи!',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: thirdColor,
+                        fontWeight: FontWeight.w100,
+                        fontSize: 12,
+                    ),
+                  ),
+                ),
               Container(
                 width: screenSize.width,
                 height: 100,
@@ -109,10 +139,19 @@ class _NewGroupCreatingSettingsState extends State<NewGroupCreatingSettings> {
                       height: 50,
                       width: 270,
                       child: TextField(
+                        focusNode: groupNameFocusNode,
                         controller: groupNameController,
                         decoration: InputDecoration(
                           hintText: 'Назва групи',
-                          hintStyle: Theme.of(context).textTheme.labelMedium,
+                          hintStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            color: isTriedToLeaveEmptyName
+                                ? groupNameFocusNode.hasFocus
+                                  ? thirdColor.withOpacity(0.4)
+                                  :thirdColor
+                                : groupNameFocusNode.hasFocus
+                                  ? Colors.white.withOpacity(0.4)
+                                  : Colors.white,
+                          ),
                           border: InputBorder.none,
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,

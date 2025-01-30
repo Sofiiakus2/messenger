@@ -6,14 +6,15 @@ class ReplyForwardBlock extends StatelessWidget {
   final bool isReply;
   final bool isForward;
   final MessageModel? message;
-  final Function cancelEditMessage;
+  final Function cancelSendingMessage;
+
 
   const ReplyForwardBlock({
     super.key,
     required this.isReply,
     required this.isForward,
     required this.message,
-    required this.cancelEditMessage,
+    required this.cancelSendingMessage,
   });
 
   @override
@@ -63,7 +64,7 @@ class ReplyForwardBlock extends StatelessWidget {
         ),
         const Expanded(child: SizedBox()),
         IconButton(
-          onPressed: () => cancelEditMessage(),
+          onPressed: () => cancelSendingMessage(),
           icon: const Icon(
             Icons.close,
             color: thirdColor,

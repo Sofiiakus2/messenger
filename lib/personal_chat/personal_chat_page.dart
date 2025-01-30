@@ -78,6 +78,14 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
     });
   }
 
+  void _cancelAll() {
+    setState(() {
+      isReply = false;
+      isForward = false;
+      isEdit = false;
+    });
+  }
+
   void _toggleReply(bool replyState) {
     setState(() {
       isEdit = false;
@@ -352,6 +360,9 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
                       },
                       onFileSent: (file){
                         addFileMessage(file);
+                      },
+                      onCancelSending: (){
+                        _cancelAll();
                       },
                     ),
                   ],

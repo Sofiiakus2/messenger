@@ -9,7 +9,7 @@ import 'reply_forward_block.dart';
 class SendingBlock extends StatefulWidget {
   const SendingBlock({
     super.key,
-    required this.chatId, required this.isEdit, required this.isReply, this.message, required this.onMessageSent, required this.isForward, required this.onFileSent,
+    required this.chatId, required this.isEdit, required this.isReply, this.message, required this.onMessageSent, required this.isForward, required this.onFileSent, required this.onCancelSending,
   });
 
   final String chatId;
@@ -19,6 +19,7 @@ class SendingBlock extends StatefulWidget {
   final MessageModel? message;
   final Function(String) onMessageSent;
   final Function(MessageModel) onFileSent;
+  final Function() onCancelSending;
 
   @override
   State<SendingBlock> createState() => _SendingBlockState();
@@ -52,6 +53,12 @@ class _SendingBlockState extends State<SendingBlock> {
         isEmpty = true;
       });
     }
+  }
+
+  void cancelSendingMessage() {
+      messageController.clear();
+      widget.onCancelSending();
+
   }
 
   @override
@@ -88,7 +95,7 @@ class _SendingBlockState extends State<SendingBlock> {
             isReply: widget.isReply,
             isForward: widget.isForward,
             message: widget.message,
-            cancelEditMessage: cancelEditMessage,
+            cancelSendingMessage: cancelSendingMessage,
           ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,

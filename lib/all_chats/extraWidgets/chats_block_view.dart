@@ -35,6 +35,9 @@ class ChatsBlockView extends StatelessWidget {
               },
               child: Container(
                 margin: const EdgeInsets.only(bottom: 10),
+                color: isMessageNeed
+                  ? Colors.white
+                  : Colors.transparent,
                 child: Row(
                   children: [
                     CircleAvatar(radius: isMessageNeed
@@ -90,7 +93,6 @@ class ChatsBlockView extends StatelessWidget {
                 ),
               ),
             ),
-            if(isMessageNeed == false)
             Container(
                 width: screenSize.width,
                 padding: EdgeInsets.only(bottom: 10),
