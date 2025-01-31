@@ -225,21 +225,23 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
       time: DateTime.now(),
       status: false,
       isEdited: false,
-      messageType: MessageType.text
+      messageType: MessageType.text,
     );
 
-    setState(() {
-      messages.insert(0, newMessage);
-    });
-
-    scrollChat();
-
     try {
-      await MessagesRepository().sendMessage(chat!.id, newMessage);
+      final messageRef = await MessagesRepository().sendMessage(chat!.id, newMessage);
+
+      setState(() {
+        newMessage.id = messageRef.id;
+        messages.insert(0, newMessage);
+      });
+
+      scrollChat();
     } catch (e) {
       rethrow;
     }
   }
+
 
   void scrollChat() {
     Future.delayed(const Duration(milliseconds: 100), () {
@@ -382,6 +384,7 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
               copyAction: _copyMessageAction,
               hideActions: _hideMessageActions,
               forwardAction: () => _toggleForward(messages[_selectedMessageIndex]),
+              keyboardHeight: MediaQuery.of(context).viewInsets.bottom,
             ),
 
           if (chat != null)

@@ -8,6 +8,7 @@ import '../../../models/message_model.dart';
 class MessageActions extends StatelessWidget {
   final String? currentUserId;
   final int selectedMessageIndex;
+  final double keyboardHeight;
   final List<MessageModel> messages;
   final Offset tapPosition;
   final Function(String) deleteMessage;
@@ -28,6 +29,8 @@ class MessageActions extends StatelessWidget {
     required this.hideActions,
     required this.copyAction,
     required this.forwardAction,
+    required this.keyboardHeight,
+
   });
 
   @override
@@ -45,8 +48,8 @@ class MessageActions extends StatelessWidget {
       adjustedLeft = screenWidth - blockWidth - 10;
     }
 
-    if (tapPosition.dy + blockHeight > screenHeight) {
-      adjustedTop = screenHeight - blockHeight - 10;
+    if (tapPosition.dy + blockHeight > screenHeight - keyboardHeight) {
+      adjustedTop = screenHeight - blockHeight - keyboardHeight - 10;
     }
 
     if (tapPosition.dx < 0) {
@@ -56,6 +59,8 @@ class MessageActions extends StatelessWidget {
     if (tapPosition.dy < 0) {
       adjustedTop = 10;
     }
+
+
 
     return Positioned(
       top: adjustedTop,
@@ -130,21 +135,21 @@ class MessageActions extends StatelessWidget {
                 onTap: () {
                   copyAction();
                   hideActions();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Текст скопійовано у буфер обміну',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white),
-                      ),
-                      duration: const Duration(seconds: 2),
-                      backgroundColor: thirdColor.withOpacity(0.5),
-                      behavior: SnackBarBehavior.floating,
-                      margin: const EdgeInsets.only(bottom: 50, left: 10, right: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                  );
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   SnackBar(
+                  //     content: Text(
+                  //       'Текст скопійовано у буфер обміну',
+                  //       style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white),
+                  //     ),
+                  //     duration: const Duration(seconds: 2),
+                  //     backgroundColor: thirdColor.withOpacity(0.5),
+                  //     behavior: SnackBarBehavior.floating,
+                  //     margin: const EdgeInsets.only(bottom: 50, left: 10, right: 10),
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(20),
+                  //     ),
+                  //   ),
+                  // );
 
                 },
                 child: Row(

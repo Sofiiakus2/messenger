@@ -7,16 +7,18 @@ class MessagesRepository{
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future<void> sendMessage(String chatId, MessageModel newMessage) async {
-
+  Future<DocumentReference> sendMessage(String chatId, MessageModel newMessage) async {
     try {
-      final messageRef = firestore.collection('chats').doc(chatId).collection('messages');
-      await messageRef.add(newMessage.toMap());
+      final messageRef = firestore.collection('chats').doc(chatId).collection('messages').doc();
+      newMessage.id = messageRef.id; // Додаємо ID до об'єкта
+      await messageRef.set(newMessage.toMap());
 
+      return messageRef; // Повертаємо референцію на документ
     } catch (e) {
       rethrow;
     }
   }
+
 
   Future<void>sendDefoltMessage(String chatId)async {
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;

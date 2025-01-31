@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../models/message_model.dart';
 import '../../../theme.dart';
 import '../file_attachment_button.dart';
