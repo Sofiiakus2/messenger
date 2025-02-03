@@ -79,6 +79,14 @@ class UserModel{
     await save();
   }
 
+  Future<void> deleteFavoriteContact(String contactId) async {
+
+
+    favoriteContacts!.remove(contactId);
+
+    await save();
+  }
+
   Future<void> save() async {
     try {
       CollectionReference users = FirebaseFirestore.instance.collection('users');

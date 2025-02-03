@@ -5,9 +5,10 @@ import 'package:messanger/repositories/user_repository.dart';
 import 'package:messanger/theme.dart';
 
 
-class ChatSettingsActions extends StatelessWidget {
+class ChatSettingsActions extends StatefulWidget {
   final ChatModel chat;
   final bool showActions;
+  final String companionId;
   final Function(bool) onShowActionsChanged;
 
   const ChatSettingsActions({
@@ -15,17 +16,35 @@ class ChatSettingsActions extends StatelessWidget {
     required this.chat,
     required this.showActions,
     required this.onShowActionsChanged,
+    required this.companionId,
   });
 
   @override
+  State<ChatSettingsActions> createState() => _ChatSettingsActionsState();
+}
+
+class _ChatSettingsActionsState extends State<ChatSettingsActions> {
+  bool isFav = false;
+
+  @override
+  void initState() {
+    fetchData();
+    super.initState();
+  }
+
+  void fetchData() async{
+    isFav = await UserRepository().isContactInFavorites(widget.companionId);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return showActions
+    return widget.showActions
         ? Positioned(
       top: 90,
       right: 40,
       child: GestureDetector(
         onTap: () {
-          onShowActionsChanged(false);
+          widget.onShowActionsChanged(false);
         },
         child: Container(
           width: 200,
@@ -44,7 +63,7 @@ class ChatSettingsActions extends StatelessWidget {
                     context: context,
                     builder: (BuildContext context) {
                       return DeletingConfirmationDialog(
-                        chatId: chat.id,
+                        chatId: widget.chat.id,
                       );
                     },
                   );
@@ -66,14 +85,24 @@ class ChatSettingsActions extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              if(chat.isGroup == false)
+              if(widget.chat.isGroup == false)
                 Column(
                   children: [
                     const SizedBox(height: 10),
                     GestureDetector(
-                      onTap: () async {
-                        UserRepository().addContactToFavorites(chat.companionsIds);
-                        onShowActionsChanged(false);
+                      onTap: () {
+                        if(isFav){
+                          UserRepository().removeContactFromFavorites(widget.chat.companionsIds);
+                          setState(() {
+                            isFav = false;
+                          });
+                        }else{
+                          UserRepository().addContactToFavorites(widget.chat.companionsIds);
+                          setState(() {
+                            isFav = true;
+                          });
+                        }
+                        widget.onShowActionsChanged(false);
                         },
                       child: Row(
                         children: [

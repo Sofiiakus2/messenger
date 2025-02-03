@@ -113,14 +113,11 @@ class UserRepository{
   Future<List<String>> getFavoriteContacts() async {
     try {
       final currentUser = auth.currentUser;
-      // Отримуємо посилання на колекцію користувачів
       DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(currentUser!.uid).get();
 
-      // Перевіряємо чи існує користувач
       if (userSnapshot.exists) {
-        // Отримуємо список улюблених контактів
         List<dynamic> favoriteContacts = userSnapshot['favoriteContacts'] ?? [];
-        return List<String>.from(favoriteContacts); // Перетворюємо в список String
+        return List<String>.from(favoriteContacts);
       } else {
         print("User not found");
         return [];
@@ -218,7 +215,52 @@ class UserRepository{
     }
   }
 
+  Future<void> removeContactFromFavorites(List<String> contactIds) async {
+    try {
+      final currentUser = auth.currentUser;
 
+      UserModel? user = await UserRepository().getUser(currentUser!.uid);
+
+      final contactToRemove = contactIds.firstWhere(
+            (contactId) => contactId != currentUser.uid,
+        orElse: () => throw Exception('Контакт, відмінний від поточного користувача, не знайдено'),
+      );
+
+      await user!.deleteFavoriteContact(contactToRemove);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+
+  Future<bool> isContactInFavorites(String contactId) async {
+    try {
+      final currentUser = auth.currentUser;
+      if (currentUser == null) return false;
+
+      UserModel? user = await UserRepository().getUser(currentUser.uid);
+      if (user == null) return false;
+
+      return user.favoriteContacts!.contains(contactId);
+    } catch (e) {
+      return false;
+    }
+  }
+
+
+  Future<bool> hasFavoriteContacts() async {
+    try {
+      final currentUser = auth.currentUser;
+      if (currentUser == null) return false;
+
+      UserModel? user = await UserRepository().getUser(currentUser.uid);
+      if (user == null) return false;
+
+      return user.favoriteContacts!.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
+  }
 
 
 

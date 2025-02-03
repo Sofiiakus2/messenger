@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../models/message_model.dart';
 import '../../../theme.dart';
-import '../file_attachment_button.dart';
+import '../file_attachment/file_attachment_button.dart';
 import 'editing_block.dart';
 import 'reply_forward_block.dart';
 

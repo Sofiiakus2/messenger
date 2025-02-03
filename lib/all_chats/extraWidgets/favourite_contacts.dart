@@ -78,7 +78,6 @@ class _FavouriteContactsState extends State<FavouriteContacts> {
                     scrollDirection: Axis.horizontal,
                     itemCount: users.length,
                     itemBuilder: (context, index) {
-                      print(users[index].name);
                       return GestureDetector(
                         onTap: () async {
                           ChatModel chat = await ChatRepository()

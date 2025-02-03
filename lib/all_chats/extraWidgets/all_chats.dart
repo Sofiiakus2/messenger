@@ -4,7 +4,8 @@ import '../../controllers/chat_controller.dart';
 import 'chats_block_view.dart';
 
 class AllChats extends StatelessWidget {
-  const AllChats({super.key});
+  const AllChats({super.key, required this.isFavEmpty});
+  final bool isFavEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -12,10 +13,16 @@ class AllChats extends StatelessWidget {
 
     return Obx(() {
       return Padding(
-        padding: const EdgeInsets.only(top: 180),
+        padding: EdgeInsets.only(
+            top: isFavEmpty
+              ? 180
+              : 10
+        ),
         child: Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.65,
+          height: isFavEmpty
+              ? MediaQuery.of(context).size.height * 0.65
+              :MediaQuery.of(context).size.height * 0.82,
           padding: const EdgeInsets.symmetric(horizontal: 20),
           decoration: const BoxDecoration(
             color: Colors.white,

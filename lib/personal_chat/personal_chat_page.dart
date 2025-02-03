@@ -387,10 +387,11 @@ class _PersonalChatPageState extends State<PersonalChatPage> {
               keyboardHeight: MediaQuery.of(context).viewInsets.bottom,
             ),
 
-          if (chat != null)
+          if (chat != null && companion !=null)
           ChatSettingsActions(
             chat: chat!,
             showActions: _showSettingsActions,
+            companionId: companion!.id!,
             onShowActionsChanged: (bool value) {
               setState(() {
                 _showSettingsActions = value;

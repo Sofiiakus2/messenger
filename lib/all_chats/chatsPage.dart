@@ -4,6 +4,7 @@ import 'package:messanger/all_chats/extraWidgets/searchChatsPage/search_chats_vi
 import 'package:messanger/nav_bar/nav_bar.dart';
 import 'package:messanger/theme.dart';
 
+import '../repositories/user_repository.dart';
 import 'extraWidgets/all_chats.dart';
 import 'extraWidgets/favourite_contacts.dart';
 
@@ -15,16 +16,30 @@ class ChatsPage extends StatefulWidget {
 }
 
 class _ChatsPageState extends State<ChatsPage> {
+  bool isFavIsNotEmpty = true;
+
 
   @override
   void initState() {
+    fetchData();
     super.initState();
+  }
+
+  void fetchData() async{
+    bool result = await UserRepository().hasFavoriteContacts();
+    setState(() {
+      isFavIsNotEmpty = result;
+    });
+    print(isFavIsNotEmpty);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const NavBar(),
+      backgroundColor: isFavIsNotEmpty
+        ? Colors.white
+        : primaryColor,
       floatingActionButton: FloatingActionButton(
           onPressed: () {
             showModalBottomSheet(
@@ -77,10 +92,11 @@ class _ChatsPageState extends State<ChatsPage> {
               padding: const EdgeInsets.only(left: 15.0, top: 20, bottom: 30),
               child: Text('Повідомлення', style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.black),),
             ),
-            const Stack(
+            Stack(
               children: [
+                if(isFavIsNotEmpty)
                 FavouriteContacts(),
-                AllChats()
+                AllChats(isFavEmpty: isFavIsNotEmpty,)
               ],
             )
           ],
