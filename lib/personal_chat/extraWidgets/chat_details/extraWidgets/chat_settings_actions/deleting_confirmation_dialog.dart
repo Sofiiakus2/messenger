@@ -33,20 +33,6 @@ class DeletingConfirmationDialog extends StatelessWidget {
             await ChatRepository().deleteChat(chatId);
             Navigator.of(context).pop();
             Navigator.of(context).pop();
-            // bool isOwner = await UserRepository().isUserGroupOwner(userId, chatId);
-            //
-            // if(isOwner){
-            //   await UserRepository().transferGroupOwnership(chatId, userId);
-            //   await UserRepository().removeUserFromChat(chatId, userId);
-            //   await UserRepository().removeChatFromUser(chatId, userId);
-            //   Navigator.of(context).pop();
-            // }else{
-            //   await UserRepository().removeUserFromChat(chatId, userId);
-            //   await UserRepository().removeChatFromUser(chatId, userId);
-            // }
-            // Navigator.of(context).pop();
-            // Navigator.of(context).pop();
-
           },
           style: ButtonStyle(
             backgroundColor: WidgetStateProperty.all(secondaryColor),

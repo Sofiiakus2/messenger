@@ -14,7 +14,6 @@ class MessageModel{
   String? filePath;
   String? fileName;
   int? fileSize;
-
   MessageModel? replyMessage;
 
   MessageModel({

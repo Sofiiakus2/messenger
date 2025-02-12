@@ -98,9 +98,10 @@ class AuthRepository{
       },
       codeSent: (String verificationId, int? resendToken) {
         codeSent(verificationId);
+        print("Code sent");
       },
       codeAutoRetrievalTimeout: (String verificationId) {
-
+        print("codeAutoRetrievalTimeout");
       },
     );
   }

@@ -10,10 +10,10 @@ class MessagesRepository{
   Future<DocumentReference> sendMessage(String chatId, MessageModel newMessage) async {
     try {
       final messageRef = firestore.collection('chats').doc(chatId).collection('messages').doc();
-      newMessage.id = messageRef.id; // Додаємо ID до об'єкта
+      newMessage.id = messageRef.id;
       await messageRef.set(newMessage.toMap());
 
-      return messageRef; // Повертаємо референцію на документ
+      return messageRef;
     } catch (e) {
       rethrow;
     }
@@ -73,11 +73,7 @@ class MessagesRepository{
     }
   }
 
-  Future<void> updateMessage(
-    String chatId,
-    String messageId,
-    String updatedText,
-  ) async {
+  Future<void> updateMessage(String chatId, String messageId, String updatedText) async {
     try {
       await FirebaseFirestore.instance
           .collection('chats')

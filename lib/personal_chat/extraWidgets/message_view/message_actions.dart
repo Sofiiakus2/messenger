@@ -135,22 +135,6 @@ class MessageActions extends StatelessWidget {
                 onTap: () {
                   copyAction();
                   hideActions();
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //   SnackBar(
-                  //     content: Text(
-                  //       'Текст скопійовано у буфер обміну',
-                  //       style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white),
-                  //     ),
-                  //     duration: const Duration(seconds: 2),
-                  //     backgroundColor: thirdColor.withOpacity(0.5),
-                  //     behavior: SnackBarBehavior.floating,
-                  //     margin: const EdgeInsets.only(bottom: 50, left: 10, right: 10),
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(20),
-                  //     ),
-                  //   ),
-                  // );
-
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

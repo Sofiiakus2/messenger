@@ -141,7 +141,7 @@ class ChatRepository{
         'name': newName,
       });
     } catch (e) {
-      print("Error updating chat name: $e");
+      rethrow;
     }
   }
 

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:messanger/theme.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -15,14 +18,13 @@ class MediaBottomSheet extends StatefulWidget {
 
 class _MediaBottomSheetState extends State<MediaBottomSheet> {
   List<AssetEntity> assets = [];
+  final ImagePicker _picker = ImagePicker();
 
   Future<void> fetchMedia() async {
     final PermissionStatus status = await Permission.photos.request();
 
     if (status.isGranted) {
-      print("Доступ до медіафайлів надано");
     } else if (status.isDenied) {
-      print("Доступ до медіафайлів відхилено");
     } else if (status.isPermanentlyDenied) {
       await openAppSettings();
     }
@@ -43,12 +45,31 @@ class _MediaBottomSheetState extends State<MediaBottomSheet> {
     });
   }
 
-  Future<PlatformFile> convertToPlatformFile(AssetEntity asset) async {
-    final file = await asset.file; // Отримуємо фізичний файл
+  Future<void> _openCamera(context) async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      final platformFile = await convertToPlatformFileCamera(image);
+      widget.onSelect(platformFile);
+      Navigator.pop(context);
+    }
+  }
+
+  Future<PlatformFile> convertToPlatformFileCamera(XFile image) async {
+    final file = File(image.path);
     return PlatformFile(
-      path: file?.path ?? '', // Шлях до файлу
-      name: asset.title!, // Назва файлу
-      size: file?.lengthSync() ?? 0, // Розмір файлу
+      path: file.path,
+      name: file.path.split('/').last,
+      size: file.lengthSync(),
+    );
+  }
+
+
+  Future<PlatformFile> convertToPlatformFile(AssetEntity asset) async {
+    final file = await asset.file;
+    return PlatformFile(
+      path: file?.path ?? '',
+      name: asset.title!,
+      size: file?.lengthSync() ?? 0,
     );
   }
 
@@ -82,6 +103,7 @@ class _MediaBottomSheetState extends State<MediaBottomSheet> {
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return GestureDetector(
+                      onTap: () => _openCamera(context),
                       child: Container(
                         color: thirdColor.withOpacity(0.6),
                         child: Icon(Icons.camera, color: primaryColor, size: 40,),

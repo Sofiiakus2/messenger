@@ -23,17 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Get.offNamed('/login');
       }
     });
-    // if (userId != null){
-    //   bool isAuthenticated = await authenticateUser();
-    //   print(isAuthenticated);
-    //
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     Get.offNamed('/');
-    //   });
-    // }else{
-    //   Get.offNamed('/login');
-    //
-    // }
+
 
   }
 
